@@ -15,7 +15,10 @@ Leggi integralmente, in questo ordine:
 7. `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`
 8. `docs/07_IMPLEMENTATION_PLAN.md`
 9. `docs/08_OPEN_QUESTIONS.md`
-10. `docs/99_SOURCES.md`
+10. `docs/09_CURRENT_AP_REFERENCE.md`
+11. `docs/99_SOURCES.md`
+
+`09_CURRENT_AP_REFERENCE.md` fotografa il servizio/listino oggi in uso: serve per capire la base di partenza, ma non va trasformato automaticamente nel nuovo sito né pubblicato come listino.
 
 ## Obiettivo operativo
 
@@ -29,6 +32,7 @@ Costruire una prima versione completa e navigabile del sito, coerente con i docu
 - Mantieni testi e componenti modulari, perché verranno rifiniti successivamente in Cursor.
 - Prima implementa struttura, design system, componenti e motion language; poi completa tutte le sezioni.
 - Usa placeholder visivi chiaramente sostituibili quando manca un asset finale, senza bloccare lo sviluppo.
+- Non aspettare la risoluzione dei punti non bloccanti di `08_OPEN_QUESTIONS.md`: fai una prima build coerente e segnala ciò che resta da decidere.
 
 ## Output atteso della prima fase
 
