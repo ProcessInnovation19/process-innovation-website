@@ -6,16 +6,16 @@ Process & Innovation può includere nei dispositivi gestiti una soluzione di pro
 
 Per la comunicazione pubblica non è necessario citare la piattaforma attraverso cui viene amministrata: il valore per il cliente è che la protezione viene **installata, configurata e controllata all'interno della gestione IT**.
 
-Funzioni verificabili della soluzione attualmente disponibile includono:
+Funzioni verificabili della soluzione attualmente disponibile, in base a sistema operativo e licenza effettivamente attivata, includono:
 
 - protezione antimalware in tempo reale;
+- protezione contro ransomware, phishing e altre minacce;
 - scansioni pianificabili e on-demand;
-- controllo avanzato delle minacce tramite analisi euristica di applicazioni e processi;
-- sicurezza del traffico web;
-- protezione contro siti fraudolenti e phishing;
-- firewall e controllo dei tentativi di connessione non autorizzati;
-- controllo/scansione di dispositivi esterni supportati;
-- stato di protezione, eventi e avvisi centralizzati.
+- analisi comportamentale/euristica su piattaforme supportate;
+- sicurezza e scansione del traffico web;
+- controllo/scansione di dispositivi esterni su piattaforme supportate;
+- firewall e funzioni anti-exploit su piattaforme supportate;
+- stato di protezione, eventi e avvisi gestibili centralmente.
 
 ### Messaggio da comunicare
 
@@ -23,7 +23,7 @@ Non “ti installiamo un antivirus”, ma:
 
 > **La protezione endpoint fa parte dell'ambiente che gestiamo.** Possiamo controllarne lo stato, applicare criteri coerenti e intervenire quando viene rilevata un'anomalia.
 
-Non promettere invulnerabilità, rischio zero o funzioni EDR/MDR non espressamente comprese nella licenza effettivamente adottata.
+Non promettere invulnerabilità, rischio zero o funzioni EDR/MDR/XDR non espressamente comprese nella licenza effettivamente adottata.
 
 ---
 
@@ -41,21 +41,22 @@ Aspetti utili da comunicare:
 - utilizzo tramite telefoni VoIP, applicazioni desktop e app mobile;
 - possibilità di lavorare e rispondere con il numero aziendale anche fuori sede;
 - utenti e numeri scalabili;
-- gestione di più sedi nello stesso sistema;
+- utilizzo adatto a organizzazioni distribuite e multi-sede;
 - IVR, gruppi, regole di risposta, inoltri e trasferimenti;
 - integrazioni con numerosi CRM e strumenti aziendali;
 - API pubbliche per integrazioni personalizzate;
-- webhook, registro chiamate e avvio chiamate tramite API;
-- servizi AI disponibili in specifiche componenti dell'offerta Voxloud, in particolare nell'area chat/messaggistica e nelle automazioni collegate.
+- webhook per eventi di chiamata, accesso al registro chiamate, avvio chiamate e gestione contatti tramite API;
+- funzionalità AI offerte da Voxloud in specifici moduli, tra cui analisi/riassunto delle conversazioni e automazioni/chat assistite da AI.
 
 ### Connettività Voxloud Wi‑Fi
 
-Voxloud offre anche connettività business, con disponibilità che dipende dalla copertura:
+Voxloud offre anche connettività business, con disponibilità che dipende dalla copertura e dall'offerta attivabile:
 
 - FTTH dove disponibile;
 - FTTC dove la fibra completa non è disponibile;
+- velocità fino a 1 Gb/s in alcune configurazioni e aree coperte;
 - modem/router incluso nelle offerte previste;
-- possibilità di linea mobile 4G di backup per ridurre l'impatto di indisponibilità della linea fissa.
+- possibilità di Internet Key 4G di backup per ridurre l'impatto di indisponibilità della linea fissa.
 
 ### Posizionamento per Process & Innovation
 
