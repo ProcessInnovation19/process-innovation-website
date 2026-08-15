@@ -1,0 +1,16 @@
+---
+description: Source of truth for Process & Innovation website
+alwaysApply: true
+---
+
+# Project context
+
+Before substantial design or implementation changes, use the documents in `docs/` as the project source of truth.
+
+Read `docs/00_VISION.md` through `docs/08_OPEN_QUESTIONS.md` in numeric order when starting a new major task.
+
+Key principles:
+- A&P is proactive managed IT, not break/fix support.
+- Preserve the futuristic game-HUD visual direction in `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`.
+- Do not turn unverified/open items into public claims.
+- Keep components, content and motion modular so the site can evolve without redesigning the whole codebase.
