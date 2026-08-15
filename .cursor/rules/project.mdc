@@ -7,10 +7,11 @@ alwaysApply: true
 
 Before substantial design or implementation changes, use the documents in `docs/` as the project source of truth.
 
-Read `docs/00_VISION.md` through `docs/08_OPEN_QUESTIONS.md` in numeric order when starting a new major task.
+Read `docs/00_VISION.md` through `docs/09_CURRENT_AP_REFERENCE.md` in numeric order when starting a new major task, then consult `docs/99_SOURCES.md` when claims about partners, security or contractual terminology matter.
 
 Key principles:
 - A&P is proactive managed IT, not break/fix support.
+- `docs/09_CURRENT_AP_REFERENCE.md` is the current baseline, not content that must be published unchanged.
 - Preserve the futuristic game-HUD visual direction in `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`.
 - Do not turn unverified/open items into public claims.
 - Keep components, content and motion modular so the site can evolve without redesigning the whole codebase.
