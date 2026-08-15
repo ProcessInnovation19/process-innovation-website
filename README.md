@@ -29,6 +29,11 @@ Non è un sito parallax cinematografico e non è un sito 3D. L'interfaccia deve 
 7. `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`
 8. `docs/07_IMPLEMENTATION_PLAN.md`
 9. `docs/08_OPEN_QUESTIONS.md`
-10. `docs/99_SOURCES.md`
+10. `docs/09_CURRENT_AP_REFERENCE.md`
+11. `docs/99_SOURCES.md`
 
-Il file `CLAUDE.md` contiene le istruzioni operative sintetiche per la prima implementazione con Claude/Opus. Successivamente il progetto potrà essere rifinito in Cursor usando gli stessi documenti come fonte di verità.
+Il file `CLAUDE.md` contiene l'handoff per la prima implementazione con Claude/Opus. `AGENTS.md` e `.cursor/rules/` mantengono le stesse priorità quando il progetto passa a Cursor o ad altri agenti.
+
+## Regola importante
+
+`09_CURRENT_AP_REFERENCE.md` descrive il servizio/listino oggi in uso. È una **baseline**, non il nuovo sito definitivo: serve per preservare ciò che funziona e capire cosa deve evolvere.
