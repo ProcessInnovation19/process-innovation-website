@@ -1,0 +1,20 @@
+---
+description: Ponytail-style minimal diffs — reuse first, no unsolicited refactors
+alwaysApply: true
+---
+
+# Minimal change (Ponytail)
+
+Before writing code, climb this ladder and stop at the first rung that works:
+
+1. Does this need to exist? (YAGNI — skip speculative work)
+2. Already in this codebase? Reuse it
+3. Stdlib / language built-in?
+4. Native platform feature (CSS, DB constraint, framework primitive)?
+5. Already-installed dependency?
+6. One-liner / smallest patch?
+7. Only then: minimum new code
+
+**Never cut:** authz, validation at trust boundaries, data-loss prevention, secret handling, accessibility for interactive UI.
+
+Do not drive-by refactor, rename widely, or add layers “for cleanliness” unless requested.

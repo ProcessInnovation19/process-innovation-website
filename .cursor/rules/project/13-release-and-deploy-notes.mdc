@@ -1,0 +1,11 @@
+---
+description: Release notes for the institutional website
+alwaysApply: false
+---
+
+# Release / deploy notes
+
+- First goal: navigable responsive build proving brand, IA, HUD components, connection lines, motion (see `docs/07`).
+- Final assets may be swapped later without redesigning architecture.
+- No production deploy assumptions until chosen hosting/stack is recorded in docs/decisions.
+- Do not commit secrets, `.env` with credentials, or unverified public security claims.

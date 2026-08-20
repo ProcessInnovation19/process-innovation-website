@@ -1,0 +1,12 @@
+---
+description: AI-facing documentation system
+alwaysApply: true
+---
+
+# Documentation System
+
+- Primary AI-facing documentation: `docs/ai/`.
+- Files: `ARCHITECTURE.md`, `PROJECT_RULES.md`, `PAGE_DOCS.md`, `DECISIONS.md`, `CHANGELOG_AI.md`, `AGENT_IMPROVEMENTS.md`.
+- Before changes, consult relevant docs if they exist.
+- When behavior changes, update the relevant documentation. Keep docs factual and concise.
+- Never invent content for `docs/ai/`. Only populate from repository evidence, existing docs, or explicit user instructions. Use placeholders or TODO where facts are unknown.

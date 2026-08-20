@@ -17,18 +17,43 @@ La parola chiave è **sistema connesso**.
 
 ## Palette
 
-Partire dai colori esistenti del brand Process & Innovation — blu e azzurro/ciano — e trasformarli in una palette digitale più sofisticata.
+Partire dai colori ufficiali del logo Process & Innovation (asset in `brand/logo/`, token in `brand/README.md`).
 
-Indicazioni:
+Colori brand, invarianti:
 
-- fondo principale scuro o molto scuro per far emergere l'interfaccia;
-- blu del brand come colore strutturale;
-- ciano/azzurro come segnale attivo e collegamento;
-- superfici secondarie semi-trasparenti o leggermente illuminate;
-- bianco/grigio chiaro per il testo;
-- evitare arcobaleni di colori senza funzione.
+| Ruolo | Hex | Uso |
+|-------|-----|-----|
+| Nero | `#000000` | Riferimento del logo |
+| Blu strutturale (deep) | `#30549C` | PROCESS, arco P, punto i |
+| Blu/ciano attivo (bright) | `#3CA8E4` | INNOVATION, steli mark |
+| Bianco | `#FFFFFF` | Outline, `&` |
 
-I valori esatti verranno definiti dopo aver recuperato logo e asset ufficiali.
+### Tema chiaro (decisione del 16 agosto 2026)
+
+La direzione iniziale prevedeva un fondo nero. **La scelta è stata cambiata: il tema è chiaro.** L'identità HUD non dipende dal fondo scuro ma dalla geometria dei pannelli, dai nodi, dalle linee di connessione e dal motion language, che restano invariati.
+
+Indicazioni per il tema chiaro:
+
+- fondo chiaro freddo, con una leggera dominante blu; pannelli bianchi che galleggiano davanti;
+- **il blu deep `#30549C` diventa il colore d'accento** per testo, tratti significativi e riempimenti;
+- **il ciano `#3CA8E4` non va usato come testo o come tratto portatore di significato**: su fondo chiaro si ferma a 2,4:1. Resta un colore di segnale sulle superfici scure;
+- testo blu-nero per i titoli, blu-grigio scuro per i testi lunghi e il microtesto;
+- superfici secondarie chiare e opache: sul fondo animato i pannelli devono coprire, non lasciar trasparire;
+- evitare arcobaleni di colori senza funzione (niente viola SaaS generico).
+
+I valori concreti vivono in un solo blocco di token semantici (`@theme` in `src/app/globals.css`): i componenti non usano mai i colori brand diretti, quindi un eventuale ritorno al fondo scuro si fa riscrivendo quel blocco.
+
+**Vincolo di contrasto.** In tema chiaro il caso peggiore è il punto **più scuro** dello sfondo (tinta ai bordi + linee di reticolo + grana sovrapposte). Ogni colore di testo è tarato lì, non sul fondo pulito: alzando la densità degli strati di sfondo va rifatta la verifica.
+
+## Profondità
+
+Lo sfondo deve dare la sensazione di molto spazio dietro l'interfaccia. Tre indizi lavorano insieme:
+
+- **parallasse** — piani a distanze diverse si spostano di quantità diverse con puntatore e scroll;
+- **prospettiva** — un tunnel di telai che rimpicciolisce verso il punto di fuga;
+- **atmosfera** — più un piano è lontano, più è sbiadito e sfocato.
+
+Realizzata con `perspective` e `translateZ` in CSS: profondità 2.5D reale ma leggera, senza costruire una scena 3D e senza WebGL.
 
 ## Geometria
 

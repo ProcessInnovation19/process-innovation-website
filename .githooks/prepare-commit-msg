@@ -1,0 +1,48 @@
+#!/bin/sh
+# Prepare-commit-msg: append version to commit message (runs after pre-commit)
+# Reads version from the same sources as pre-commit (plus ATLAS_BUMPED_VERSION cache)
+set -e
+MSGFILE="$1"
+SOURCE="$2"
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# Skip for merge, squash, or when amending with existing message
+case "$SOURCE" in
+  merge|squash) exit 0 ;;
+esac
+
+get_version() {
+  if [ -f "$ROOT/.git/ATLAS_BUMPED_VERSION" ]; then
+    cat "$ROOT/.git/ATLAS_BUMPED_VERSION" | tr -d '[:space:]\0'
+    return 0
+  fi
+  if [ -f "$ROOT/public/app-version.json" ]; then
+    grep -E '"version"' "$ROOT/public/app-version.json" | head -1 | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'
+  elif [ -f "$ROOT/app-version.json" ]; then
+    grep -E '"version"' "$ROOT/app-version.json" | head -1 | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'
+  elif [ -f "$ROOT/package.json" ]; then
+    grep -E '"version"' "$ROOT/package.json" | head -1 | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'
+  elif [ -f "$ROOT/VERSION" ]; then
+    cat "$ROOT/VERSION" | tr -d '[:space:]\0'
+  fi
+}
+
+V=$(get_version)
+[ -z "$V" ] && exit 0
+
+# Don't add if already present
+if grep -q "\[v${V}\]" "$MSGFILE" 2>/dev/null || grep -q "v${V}" "$MSGFILE" 2>/dev/null; then
+  exit 0
+fi
+
+# Skip if first line is a comment (editor template, no message yet)
+firstline=$(head -1 "$MSGFILE" 2>/dev/null || true)
+case "$firstline" in
+  \#*) exit 0 ;;
+  "") exit 0 ;;
+esac
+
+# Append " [vX.Y.Z]" to first line (subject)
+tmp="${MSGFILE}.tmp.$$"
+awk -v v="$V" 'NR==1 { $0 = $0 " [v" v "]" } { print }' "$MSGFILE" > "$tmp" && mv "$tmp" "$MSGFILE"

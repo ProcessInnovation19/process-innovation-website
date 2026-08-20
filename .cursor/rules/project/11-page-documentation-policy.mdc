@@ -1,0 +1,11 @@
+---
+description: Docs/pages policy for the marketing site
+alwaysApply: false
+---
+
+# Page documentation policy
+
+- Canonical IA/copy: `docs/05_SITE_ARCHITECTURE_AND_COPY.md`.
+- When implementing routes/sections, keep `docs/ai/PAGE_DOCS.md` in sync with real routes.
+- Visual/motion specifics: `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`.
+- Prefer updating numbered `docs/*` for product truth; use `docs/ai/` as agent-facing summary.

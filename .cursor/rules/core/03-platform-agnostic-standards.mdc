@@ -1,0 +1,13 @@
+---
+description: Provider-agnostic deployment and infrastructure
+alwaysApply: true
+---
+
+# Platform-Agnostic Standards
+
+- Remain compatible with: Vercel, Railway, Supabase, Neon, UpCloud, xPanel-like platforms.
+- Environment-driven configuration. No hardcoded secrets.
+- Stateless runtime where possible. Externalized storage where needed.
+- Migration-aware database changes.
+- Avoid provider lock-in unless explicitly approved.
+- Keep deployment assumptions documented.

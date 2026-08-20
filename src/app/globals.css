@@ -1,0 +1,1474 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   Process & Innovation — Design system HUD
+   Token colore campionati dal logo ufficiale (brand/README.md).
+   ========================================================================= */
+
+@theme {
+  /* =======================================================================
+     Brand — invarianti (brand/README.md)
+     ======================================================================= */
+  --color-pi-black: #000000;
+  --color-pi-blue-deep: #30549c;
+  --color-pi-blue-bright: #3ca8e4;
+  --color-pi-white: #ffffff;
+
+  /* =======================================================================
+     Tema chiaro — token semantici
+
+     I componenti usano SOLO questi token, mai i colori brand diretti: per
+     cambiare tema si riscrive questo blocco e nient'altro.
+
+     I valori non sono scelti a occhio: ogni colore di testo è verificato sul
+     punto più scuro raggiungibile dallo sfondo (fondo + alone di profondità
+     + linea di reticolo), dove il contrasto in tema chiaro è al minimo.
+     ======================================================================= */
+
+  /* --- Superfici, dalla più lontana alla più vicina --- */
+  --color-hud-bg: #edf1f7;
+  --color-hud-bg-raised: #f7f9fc;
+  --color-hud-panel: #ffffff;
+
+  /* --- Tratti --- */
+  --color-hud-line: #ccd8e8;
+  --color-hud-line-strong: #9db3d1;
+  --color-hud-line-active: #30549c;
+
+  /* --- Accento: in tema chiaro il ciano non regge come testo o tratto
+         significativo (2,4:1), quindi l'accento è il blu profondo del logo e
+         il ciano resta un colore di segnale sulle superfici scure. --- */
+  --color-hud-accent: #30549c;
+  --color-hud-accent-deep: #1f3d77;
+  --color-hud-accent-hover: #16305f;
+  --color-hud-on-accent: #ffffff;
+
+  /* --- Testo --- */
+  --color-hud-text-strong: #0a1a30;
+  --color-hud-text: #17293f;
+  --color-hud-text-dim: #364e6b;
+  --color-hud-text-mute: #3b5470;
+
+  /* --- Tipografia --- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono-tech), ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
+
+  /* --- Breakpoints (allineati a docs/07 QA) --- */
+  --breakpoint-xs: 24rem;   /* 384px  — mobile          */
+  --breakpoint-sm: 40rem;   /* 640px                    */
+  --breakpoint-md: 48rem;   /* 768px  — tablet          */
+  --breakpoint-lg: 64rem;   /* 1024px                   */
+  --breakpoint-xl: 80rem;   /* 1280px — laptop          */
+  --breakpoint-2xl: 90rem;  /* 1440px — desktop         */
+  --breakpoint-3xl: 120rem; /* 1920px — desktop large   */
+}
+
+:root {
+  /* --- Geometria --- */
+  --hud-cut: 14px;
+  --hud-border: 1px;
+
+  /* --- Motion language (docs/06) --- */
+  --dur-1: 140ms;  /* status  */
+  --dur-2: 260ms;  /* focus   */
+  --dur-3: 480ms;  /* boot    */
+  --dur-4: 760ms;  /* connect */
+  --dur-5: 1400ms; /* scan    */
+  --ease-hud: cubic-bezier(0.22, 0.61, 0.24, 1);
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Layout --- */
+  --shell-max: 84rem;
+  --shell-pad: 1.25rem;
+  --header-h: 4rem;
+
+  /* --- Profondità: scritte da `PointerDepth`, qui i valori di riposo --- */
+  --pointer-x: 0;
+  --pointer-y: 0;
+  --scroll-depth: 0px;
+
+  color-scheme: light;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --shell-pad: 2rem;
+    --header-h: 4.75rem;
+  }
+}
+
+/* =========================================================================
+   Base
+   ========================================================================= */
+
+* {
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-hud-bg);
+  color: var(--color-hud-text);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-hud-accent) 88%, transparent);
+  color: var(--color-hud-on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-hud-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* =========================================================================
+   Sfondo di sistema — profondità
+
+   L'interfaccia galleggia davanti a uno spazio profondo. La profondità è
+   costruita, non simulata: i piani stanno a distanze diverse su un asse Z
+   reale dentro una `perspective`, quindi inclinazione del puntatore e scroll
+   producono parallasse vera. È la "profondità 2.5D leggera tramite transform
+   e prospettiva CSS" ammessa da docs/06, senza costruire una scena 3D.
+
+   Tre indizi di profondità, tutti presenti insieme:
+   1. parallasse    — i piani si spostano di quantità diverse;
+   2. prospettiva   — un tunnel di telai che rimpicciolisce verso il punto di fuga;
+   3. atmosfera     — più un piano è lontano, più è sbiadito e sfocato.
+   ========================================================================= */
+
+.hud-backdrop {
+  /* rientro del telaio strumentale */
+  --frame-inset: 0.75rem;
+  --frame-left: 0.75rem;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  perspective: 1400px;
+  perspective-origin: 50% 44%;
+  background:
+    /* foschia luminosa attorno al punto di fuga: l'aria fra noi e il fondo */
+    radial-gradient(
+      70% 55% at 50% 44%,
+      var(--color-hud-panel) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 55%, transparent) 45%,
+      transparent 100%
+    ),
+    /*
+     * Il fondo si scurisce ai bordi: la scatola ha pareti. La tinta è tenuta
+     * al 4% perché in tema chiaro il caso peggiore di contrasto è il punto
+     * PIÙ SCURO dello sfondo, dove passa il microtesto tecnico.
+     */
+    radial-gradient(
+      130% 110% at 50% 44%,
+      var(--color-hud-bg) 40%,
+      color-mix(in srgb, var(--color-hud-accent-deep) 4%, var(--color-hud-bg)) 100%
+    );
+}
+
+@media (min-width: 64rem) {
+  .hud-backdrop {
+    --frame-inset: 1.25rem;
+    --frame-left: 1.25rem;
+  }
+}
+
+/* --- lo spazio: contenitore 3D che si inclina col puntatore -------------- */
+
+.hud-backdrop__space {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--pointer-y) * -2.2deg))
+    rotateY(calc(var(--pointer-x) * 2.6deg));
+  transition: transform 700ms var(--ease-hud);
+}
+
+.hud-backdrop__plane {
+  position: absolute;
+  inset: -30%;
+}
+
+/*
+ * Ogni piano compensa con `scale` la riduzione prospettica dovuta a
+ * `translateZ`, così continua a coprire la viewport: scale ≈ (1400 + z) / 1400.
+ * Lo scroll li muove di quantità diverse — è la parallasse verticale.
+ */
+/* più è lontano, più è sbiadito: `far` resta il piano meno presente di tutti */
+.hud-backdrop__plane--far {
+  transform: translateZ(-1600px) scale(2.14)
+    translateY(calc(var(--scroll-depth) * 0.12));
+  filter: blur(1.5px);
+  opacity: 0.35;
+}
+
+.hud-backdrop__plane--mid {
+  transform: translateZ(-800px) scale(1.57)
+    translateY(calc(var(--scroll-depth) * 0.3));
+  filter: blur(0.4px);
+  opacity: 0.75;
+}
+
+.hud-backdrop__plane--near {
+  transform: translateZ(-220px) scale(1.16)
+    translateY(calc(var(--scroll-depth) * 0.6));
+  opacity: 1;
+}
+
+/* --- reticoli sui piani, in deriva autonoma ------------------------------ */
+
+/*
+ * La deriva trasla di **esattamente una cella** del reticolo: a fine ciclo il
+ * disegno coincide con quello iniziale e il ritorno è invisibile. Direzioni e
+ * durate diverse per piano: la scena resta viva anche a mouse fermo, e la
+ * differenza fra i piani rinforza la profondità.
+ */
+.hud-backdrop__drift {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+@keyframes drift-down {
+  to {
+    transform: translate3d(0, var(--tile), 0);
+  }
+}
+
+@keyframes drift-up-left {
+  to {
+    transform: translate3d(calc(var(--tile) * -1), calc(var(--tile) * -1), 0);
+  }
+}
+
+.hud-backdrop__plane--far {
+  mask-image: radial-gradient(85% 70% at 50% 44%, #000 0%, transparent 85%);
+}
+
+.hud-backdrop__plane--far .hud-backdrop__drift {
+  --tile: 22px;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-hud-line) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-hud-line) 70%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  animation: drift-down 26s linear infinite;
+}
+
+.hud-backdrop__plane--near {
+  mask-image: radial-gradient(120% 100% at 50% 44%, transparent 8%, #000 60%, transparent 100%);
+  opacity: 0.5;
+}
+
+.hud-backdrop__plane--near .hud-backdrop__drift {
+  --tile: 132px;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-hud-line) 52%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-hud-line) 52%, transparent) 1px, transparent 1px);
+  background-size: 132px 132px;
+  animation: drift-up-left 71s linear infinite;
+}
+
+/* --- costellazione, sul piano intermedio -------------------------------- */
+
+.hud-backdrop__net {
+  height: 100%;
+  width: 100%;
+  mask-image: radial-gradient(95% 80% at 50% 44%, #000 0%, transparent 88%);
+}
+
+.hud-backdrop__net-links path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-hud-accent) 42%, transparent);
+  stroke-width: 1;
+}
+
+.hud-backdrop__net-nodes rect {
+  fill: color-mix(in srgb, var(--color-hud-accent) 22%, transparent);
+  stroke: color-mix(in srgb, var(--color-hud-accent) 60%, transparent);
+  stroke-width: 1;
+  animation: hud-node-idle 9s ease-in-out infinite;
+}
+
+/* --- impulsi che percorrono i collegamenti ------------------------------- */
+
+@keyframes net-flow {
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+.hud-backdrop__net-flow path {
+  fill: none;
+  stroke: var(--color-hud-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  /* frazione del percorso, non lunghezza assoluta: vedi `pathLength="1"` */
+  stroke-dasharray: 0.04 0.96;
+  opacity: 0.75;
+  animation-name: net-flow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* respiro lentissimo: sistema vivo, non lampeggio */
+@keyframes hud-node-idle {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* --- tunnel: telai che rimpiccioliscono verso il punto di fuga ----------- */
+
+.hud-backdrop__tunnel {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.hud-backdrop__ring {
+  position: absolute;
+  inset: 6%;
+  border: 1px solid color-mix(in srgb, var(--color-hud-accent-deep) 26%, transparent);
+  /*
+   * `--z` cresce da un telaio all'altro: la prospettiva li rimpicciolisce e
+   * l'opacità cala, così la fuga si legge anche da fermi.
+   */
+  transform: translateZ(calc(var(--z) * -1px)) translateY(calc(var(--scroll-depth) * 0.2));
+  opacity: calc(0.5 - var(--i) * 0.07);
+}
+
+/* i telai più lontani perdono anche i marker d'angolo, restano tracce */
+.hud-backdrop__ring::before,
+.hud-backdrop__ring::after {
+  content: "";
+  position: absolute;
+  height: 12px;
+  width: 12px;
+  border-color: color-mix(in srgb, var(--color-hud-accent) 45%, transparent);
+}
+
+.hud-backdrop__ring::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.hud-backdrop__ring::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+/* --- tacche strumentali ai bordi ---------------------------------------- */
+
+.hud-backdrop__ticks {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  width: 7px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-hud-line-strong) 90%, transparent) 0 1px,
+    transparent 1px 28px
+  );
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  opacity: 0.7;
+}
+
+.hud-backdrop__ticks--left {
+  left: var(--frame-left);
+}
+
+.hud-backdrop__ticks--right {
+  right: var(--frame-inset);
+}
+
+/* --- scansione lenta ---------------------------------------------------- */
+
+@keyframes hud-sweep {
+  0% {
+    opacity: 0;
+    transform: translateY(-12vh);
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(104vh);
+  }
+}
+
+.hud-backdrop__sweep {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 18vh;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--color-hud-accent) 5%, transparent),
+    transparent
+  );
+  animation: hud-sweep 19s linear infinite;
+}
+
+/* --- grana: evita il banding sui gradienti ------------------------------ */
+
+.hud-backdrop__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- telaio d'angolo ---------------------------------------------------- */
+
+.hud-backdrop__frame {
+  position: absolute;
+  top: var(--frame-inset);
+  right: var(--frame-inset);
+  bottom: var(--frame-inset);
+  left: var(--frame-left);
+}
+
+.hud-backdrop__corner {
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  border-color: color-mix(in srgb, var(--color-hud-accent) 55%, transparent);
+}
+
+.hud-backdrop__corner--tl {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.hud-backdrop__corner--tr {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+
+.hud-backdrop__corner--bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.hud-backdrop__corner--br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-backdrop__sweep {
+    display: none;
+  }
+
+  .hud-backdrop__net-nodes rect {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  /* gli impulsi sono movimento puro: senza movimento non hanno ragione d'essere */
+  .hud-backdrop__net-flow {
+    display: none;
+  }
+
+  /* la profondità resta, il movimento no */
+  .hud-backdrop__drift {
+    animation: none;
+  }
+
+  .hud-backdrop__space {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* =========================================================================
+   Pannelli HUD — angoli tagliati + bordo sottile
+   ========================================================================= */
+
+.hud-panel {
+  --cut: var(--hud-cut);
+  --cut-inner: calc(var(--cut) - 1.5px);
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  /*
+   * Il fondo dell'elemento è il *bordo*: il riempimento vero è `::before`,
+   * rientrato di 1px. In tema chiaro il bordo deve reggere da solo contro il
+   * fondo chiaro, quindi è quasi pieno.
+   */
+  background: color-mix(in srgb, var(--color-hud-line-strong) 92%, transparent);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+  /* i pannelli sono davanti allo spazio profondo: l'ombra li stacca */
+  filter: drop-shadow(0 10px 24px color-mix(in srgb, var(--color-hud-text-strong) 9%, transparent));
+  transition: background var(--dur-2) var(--ease-hud);
+}
+
+.hud-panel::before {
+  content: "";
+  position: absolute;
+  inset: var(--hud-border);
+  z-index: -1;
+  background:
+    linear-gradient(
+      160deg,
+      var(--color-hud-panel) 0%,
+      var(--color-hud-panel) 55%,
+      color-mix(in srgb, var(--color-hud-bg) 70%, var(--color-hud-panel)) 100%
+    );
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut-inner)) 0,
+    100% var(--cut-inner),
+    100% 100%,
+    var(--cut-inner) 100%,
+    0 calc(100% - var(--cut-inner))
+  );
+}
+
+/* variante "tight": angoli più corti per righe compatte (voci della mappa) */
+.hud-panel--tight {
+  --cut: 10px;
+}
+
+/* variante "quiet": bordo più discreto per griglie fitte */
+.hud-panel--quiet {
+  background: color-mix(in srgb, var(--color-hud-line) 100%, transparent);
+  filter: drop-shadow(0 6px 16px color-mix(in srgb, var(--color-hud-text-strong) 6%, transparent));
+}
+
+/* variante "active": modulo protagonista */
+.hud-panel--active {
+  background: var(--color-hud-accent);
+  filter: drop-shadow(0 12px 28px color-mix(in srgb, var(--color-hud-accent) 22%, transparent));
+}
+
+.hud-panel--interactive:hover,
+.hud-panel--interactive:focus-within {
+  background: color-mix(in srgb, var(--color-hud-accent) 62%, transparent);
+}
+
+/* linea di scansione sull'header del pannello */
+.hud-panel__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-hud-line-strong) 55%, transparent);
+  padding: 0.625rem 1rem;
+}
+
+.hud-panel__head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: linear-gradient(90deg, transparent, var(--color-hud-accent), transparent);
+  transition: width var(--dur-5) var(--ease-hud);
+}
+
+[data-in="true"] .hud-panel__head::after,
+.hud-panel:hover .hud-panel__head::after {
+  width: 100%;
+}
+
+/* =========================================================================
+   Motion language — boot / focus / status
+   ========================================================================= */
+
+/*
+ * Lo stato iniziale nascosto è vincolato a `.js`, aggiunto dallo script inline
+ * nel layout: senza JavaScript il contenuto resta visibile invece di rimanere
+ * bloccato a opacità zero.
+ */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity var(--dur-3) var(--ease-hud) var(--reveal-delay, 0ms),
+    transform var(--dur-3) var(--ease-snap) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.js [data-reveal="boot"] {
+  transform: translateY(10px) scaleY(0.985);
+  transform-origin: top;
+}
+
+.js [data-reveal="slide-left"] {
+  transform: translateX(-18px);
+}
+
+.js [data-reveal="slide-right"] {
+  transform: translateX(18px);
+}
+
+.js [data-reveal][data-in="true"] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* status indicator — pulsa una sola volta all'ingresso, poi resta stabile */
+@keyframes hud-status-in {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-hud-accent) 70%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+.hud-status-dot {
+  animation: hud-status-in var(--dur-5) var(--ease-hud) 1;
+}
+
+/* =========================================================================
+   Briefing — motion del terminale di navigazione
+
+   Animazioni (non transizioni) perché devono ripartire da capo a ogni
+   cambio di selezione: i pannelli vengono rimontati con una `key`.
+   ========================================================================= */
+
+@keyframes brief-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes brief-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes brief-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes brief-rule {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes brief-scan {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(1200%);
+  }
+}
+
+.brief-panel-left {
+  animation: brief-in-left var(--dur-3) var(--ease-snap) both;
+}
+
+.brief-panel-right {
+  animation: brief-in-right var(--dur-3) var(--ease-snap) both;
+}
+
+/* righe di testo che entrano in sequenza */
+.brief-stagger > * {
+  animation: brief-in-up var(--dur-2) var(--ease-hud) both;
+  animation-delay: calc(var(--i, 0) * 55ms + 90ms);
+}
+
+/* sweep di scansione sul riquadro immagine */
+.brief-scan {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 14%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--color-hud-accent) 22%, transparent),
+    transparent
+  );
+  animation: brief-scan var(--dur-5) var(--ease-hud) both;
+  pointer-events: none;
+}
+
+/* riga che si estende sotto la voce selezionata */
+.brief-rule {
+  transform-origin: left center;
+  animation: brief-rule var(--dur-3) var(--ease-snap) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * `animation: none` invece di una durata quasi nulla: così gli elementi
+   * assumono direttamente il loro stato naturale (opacità piena, nessuna
+   * traslazione) senza dipendere dal fatto che l'animazione venga eseguita.
+   */
+  .brief-panel-left,
+  .brief-panel-right,
+  .brief-stagger > *,
+  .brief-rule {
+    animation: none;
+  }
+
+  .brief-scan {
+    display: none;
+  }
+}
+
+/* =========================================================================
+   Fondo vivo della mappa
+
+   Lo sfondo di sistema porta la profondità di tutto il sito; qui la mappa
+   aggiunge il proprio strato e il **movimento autonomo**: la scena resta viva
+   anche a puntatore fermo.
+
+   Ogni strato in deriva ha un figlio dedicato: il genitore porta la
+   trasformazione di profondità (prospettiva, parallasse), il figlio
+   l'animazione. Separati, perché due animazioni sullo stesso `transform` si
+   sovrascrivono; e perché così la deriva resta composita invece di ridipingere
+   un intero strato a ogni fotogramma.
+
+   Le derive traslano di **esattamente una cella** del proprio motivo: a fine
+   ciclo il disegno coincide con quello iniziale e il ritorno è invisibile.
+   ========================================================================= */
+
+.map-ambience {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 1100px;
+  perspective-origin: 50% 40%;
+}
+
+/*
+ * Piattaforma prospettica: un reticolo coricato che parte dal bordo basso e
+ * scompare all'orizzonte. È l'indizio di profondità più forte a disposizione,
+ * e resta leggibile perché sfuma prima di incontrare il testo.
+ */
+.map-ambience__deck {
+  position: absolute;
+  inset-inline: -40%;
+  top: 52%;
+  bottom: -30%;
+  transform-origin: 50% 0%;
+  transform: rotateX(74deg) translateY(calc(var(--scroll-depth) * 0.25))
+    translateX(calc(var(--pointer-x) * 22px));
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 70%, transparent 100%);
+  opacity: 0.32;
+  transition: transform 700ms var(--ease-hud);
+}
+
+/* le linee della piattaforma scorrono verso di noi: moto in avanti */
+@keyframes deck-flow {
+  to {
+    transform: translate3d(0, 76px, 0);
+  }
+}
+
+.map-ambience__deck-flow {
+  position: absolute;
+  inset: -76px 0;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-hud-line-strong) 70%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-hud-line-strong) 70%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 76px 76px;
+  animation: deck-flow 9s linear infinite;
+  will-change: transform;
+}
+
+/* punti sospesi davanti alla piattaforma: danno scala allo spazio */
+.map-ambience__motes {
+  position: absolute;
+  inset: -20%;
+  mask-image: radial-gradient(80% 65% at 50% 42%, #000 0%, transparent 88%);
+  opacity: 0.55;
+  transform: translate3d(calc(var(--pointer-x) * 14px), calc(var(--pointer-y) * 9px), 0);
+  transition: transform 700ms var(--ease-hud);
+}
+
+@keyframes motes-drift {
+  to {
+    transform: translate3d(-156px, 78px, 0);
+  }
+}
+
+.map-ambience__motes-drift {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--color-hud-accent) 34%, transparent) 0 1.4px,
+    transparent 1.6px
+  );
+  background-size: 156px 156px;
+  animation: motes-drift 64s linear infinite;
+  will-change: transform;
+}
+
+/* --- interferenza -------------------------------------------------------- */
+
+/*
+ * Righe di scansione finissime che risalgono lentamente, e banda di disturbo
+ * che attraversa il quadro a intervalli.
+ *
+ * Sono **luminose, non scure**. Su un tema chiaro un disturbo scuro starebbe
+ * dietro al testo libero della mappa e ne abbasserebbe il contrasto, che qui
+ * ha pochissimo margine; uno luminoso lo alza. Così l'effetto può coprire
+ * tutta la mappa senza maschere difensive.
+ *
+ * Vanno comunque tenute al limite del percettibile: `docs/06` esclude il
+ * cyberpunk rumoroso, quindi devono leggersi come texture di un display, non
+ * come glitch.
+ */
+@keyframes scanlines-rise {
+  to {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.map-ambience__scanlines {
+  position: absolute;
+  inset: -4px 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-hud-panel) 90%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+  opacity: 0.5;
+  /* sfumatura ai bordi: il disturbo non deve avere un taglio netto */
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  animation: scanlines-rise 1.6s linear infinite;
+  will-change: transform;
+}
+
+/*
+ * Banda di disturbo: attraversa il quadro una volta ogni ~17 s, con due
+ * sfarfallii brevi. Passa e sparisce — non è un elemento fisso.
+ */
+@keyframes interference-pass {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -14vh, 0);
+  }
+  6% {
+    opacity: 0.5;
+  }
+  9% {
+    opacity: 0.14;
+    transform: translate3d(2px, 6vh, 0);
+  }
+  12% {
+    opacity: 0.6;
+  }
+  40% {
+    opacity: 0.3;
+  }
+  44% {
+    opacity: 0.62;
+    transform: translate3d(-3px, 42vh, 0);
+  }
+  70% {
+    opacity: 0.22;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 108vh, 0);
+  }
+}
+
+.map-ambience__interference {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 9vh;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--color-hud-panel) 85%, transparent) 45%,
+    color-mix(in srgb, var(--color-hud-panel) 45%, transparent) 55%,
+    transparent
+  );
+  animation: interference-pass 17s var(--ease-hud) infinite;
+  will-change: transform, opacity;
+}
+
+/* contenitore fermo: ritaglia la banda ai bordi della mappa mentre la attraversa */
+.map-ambience__interference-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* alone che respira attorno al punto di fuga */
+@keyframes map-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+.map-ambience__pulse {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  height: 40rem;
+  width: 58rem;
+  max-width: 150vw;
+  border-radius: 9999px;
+  /* l'intensità è vincolata dal contrasto del microtesto che scorre sopra:
+     vedi README §"Sfondo di sistema" */
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-hud-panel) 90%, transparent),
+    transparent 100%
+  );
+  filter: blur(26px);
+  animation: map-pulse 16s ease-in-out infinite;
+}
+
+/* linea d'orizzonte: dove la piattaforma incontra il fondo */
+.map-ambience__horizon {
+  position: absolute;
+  inset-inline: 0;
+  top: 52%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-hud-accent) 40%, transparent) 28%,
+    color-mix(in srgb, var(--color-hud-accent) 40%, transparent) 72%,
+    transparent
+  );
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-ambience__pulse,
+  .map-ambience__deck-flow,
+  .map-ambience__motes-drift,
+  .map-ambience__scanlines {
+    animation: none;
+  }
+
+  /* il disturbo è movimento puro: senza movimento non ha ragione di esserci */
+  .map-ambience__interference {
+    display: none;
+  }
+
+  .map-ambience__deck,
+  .map-ambience__motes {
+    transition: none;
+  }
+}
+
+/* =========================================================================
+   Finestra di sezione — apertura cinematica
+
+   Sequenza: velo → fascio orizzontale → apertura a diaframma del telaio →
+   ingresso del contenuto.
+   ========================================================================= */
+
+.section-window {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+}
+
+@media (min-width: 48rem) {
+  .section-window {
+    padding: 1.5rem;
+  }
+}
+
+@keyframes window-veil {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.section-window__veil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  /* Velo scuro anche in tema chiaro: una finestra chiara su una pagina chiara
+     ha bisogno di uno stacco netto per leggersi come strato sopra. */
+  background: color-mix(in srgb, var(--color-hud-text-strong) 55%, transparent);
+  backdrop-filter: blur(6px);
+  animation: window-veil var(--dur-2) var(--ease-hud) both;
+  cursor: default;
+}
+
+@keyframes window-beam {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(0);
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(1);
+  }
+}
+
+.section-window__beam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 1px;
+  width: min(96%, 84rem);
+  transform-origin: center;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-hud-accent),
+    transparent
+  );
+  animation: window-beam 620ms var(--ease-snap) both;
+}
+
+@keyframes window-open {
+  from {
+    clip-path: inset(50% 0 50% 0);
+    opacity: 0.4;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.section-window__frame {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-height: 100%;
+  width: min(100%, 84rem);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-hud-line-active) 45%, transparent);
+  background: var(--color-hud-bg);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-hud-accent) 18%, transparent),
+    0 40px 120px color-mix(in srgb, var(--color-hud-text-strong) 32%, transparent);
+  animation: window-open 420ms 200ms var(--ease-snap) both;
+}
+
+.section-window__bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-hud-line-strong) 60%, transparent);
+  background: color-mix(in srgb, var(--color-hud-bg-raised) 92%, transparent);
+  padding: 0.75rem 1rem;
+}
+
+@keyframes window-scan {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(90vh);
+  }
+}
+
+.section-window__scan {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 3;
+  height: 30vh;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--color-hud-accent) 8%, transparent),
+    transparent
+  );
+  animation: window-scan 1100ms 420ms var(--ease-hud) both;
+  pointer-events: none;
+}
+
+.section-window__body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: brief-in-up var(--dur-3) 380ms var(--ease-hud) both;
+}
+
+.section-window__corner {
+  position: absolute;
+  z-index: 4;
+  height: 14px;
+  width: 14px;
+  border-color: var(--color-hud-accent);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.section-window__corner--tl {
+  top: 6px;
+  left: 6px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.section-window__corner--tr {
+  top: 6px;
+  right: 6px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+
+.section-window__corner--bl {
+  bottom: 6px;
+  left: 6px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.section-window__corner--br {
+  bottom: 6px;
+  right: 6px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+
+/* --- chiusura --- */
+
+@keyframes window-close-frame {
+  from {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  to {
+    clip-path: inset(50% 0 50% 0);
+    opacity: 0;
+  }
+}
+
+.section-window--closing .section-window__frame {
+  animation: window-close-frame 240ms var(--ease-hud) both;
+}
+
+.section-window--closing .section-window__veil {
+  animation: window-veil 240ms var(--ease-hud) reverse both;
+}
+
+.section-window--closing .section-window__beam,
+.section-window--closing .section-window__scan {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-window__frame,
+  .section-window__veil,
+  .section-window__body,
+  .section-window--closing .section-window__frame,
+  .section-window--closing .section-window__veil {
+    animation: none;
+    clip-path: none;
+    opacity: 1;
+  }
+
+  .section-window__beam,
+  .section-window__scan {
+    display: none;
+  }
+}
+
+/* =========================================================================
+   Layer connessioni (SVG)
+   ========================================================================= */
+
+.connection-field {
+  position: relative;
+}
+
+.hud-connections {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hud-connections__path {
+  fill: none;
+  stroke: var(--color-hud-line-active);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.75;
+  transition: stroke-dashoffset var(--dur-4) var(--ease-hud);
+  transition-delay: calc(var(--edge-index, 0) * 110ms);
+}
+
+.hud-connections__path--structural {
+  stroke: var(--color-hud-line-strong);
+  opacity: 0.8;
+}
+
+.hud-connections__terminal {
+  fill: var(--color-hud-bg);
+  stroke: var(--color-hud-line-active);
+  stroke-width: 1.25;
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease-hud);
+  transition-delay: calc(var(--edge-index, 0) * 110ms + var(--dur-4));
+}
+
+[data-connections-in="true"] .hud-connections__path {
+  stroke-dashoffset: 0;
+}
+
+[data-connections-in="true"] .hud-connections__terminal {
+  opacity: 1;
+}
+
+/* =========================================================================
+   Nodo di connessione visibile (geometria del mark: quadrato della "i")
+   ========================================================================= */
+
+.hud-node {
+  position: relative;
+  display: inline-flex;
+  height: 0.75rem;
+  width: 0.75rem;
+  flex: none;
+  border: 1px solid var(--color-hud-line-active);
+  background: var(--color-hud-accent);
+}
+
+.hud-node--muted {
+  border-color: var(--color-hud-line-strong);
+  background: var(--color-hud-panel);
+}
+
+/* Regola dopo `.hud-node` per vincerne le dimensioni: `.hud-node` è fuori
+   layer e batterebbe le utility Tailwind. */
+.hud-node--sm {
+  height: 0.5rem;
+  width: 0.5rem;
+}
+
+/* =========================================================================
+   Micro tipografia tecnica
+   ========================================================================= */
+
+.hud-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-hud-text-mute);
+}
+
+.hud-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-hud-line-strong) 85%, transparent),
+    transparent
+  );
+}
+
+/* =========================================================================
+   Marker tecnici d'angolo
+
+   Elementi reali e non pseudo-elementi: `.hud-panel` usa già `::before` per
+   la superficie interna, e due regole sullo stesso pseudo-elemento si
+   sovrascriverebbero a vicenda.
+   ========================================================================= */
+
+.hud-corner {
+  position: absolute;
+  z-index: 2;
+  height: 10px;
+  width: 10px;
+  border-color: var(--color-hud-line-active);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Longhand: la shorthand `border-top` azzererebbe il colore ereditato da
+   `.hud-corner` riportandolo a `currentColor`. */
+.hud-corner--tl {
+  top: 6px;
+  left: 6px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.hud-corner--br {
+  right: 6px;
+  bottom: 6px;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+/* =========================================================================
+   Reduced motion — docs/06 "Accessibilità e prestazioni"
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hud-connections__path {
+    stroke-dashoffset: 0;
+  }
+
+  .hud-connections__terminal {
+    opacity: 1;
+  }
+
+  .hud-panel__head::after {
+    width: 100%;
+  }
+}

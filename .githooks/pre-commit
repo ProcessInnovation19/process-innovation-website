@@ -1,0 +1,61 @@
+#!/bin/sh
+# Pre-commit: bump version before every commit (inline, no npm — works on Windows/Cursor UI)
+# Priority:
+#   1) public/app-version.json
+#   2) app-version.json
+#   3) package.json "version" (Node apps without a separate app-version file)
+#   4) VERSION file (plain / non-Node)
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+bump_json_version() {
+  local f="$1"
+  [ ! -f "$f" ] && return 1
+  v=$(grep -E '"version"' "$f" | head -1 | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+  [ -z "$v" ] && return 1
+  major=$(echo "$v" | cut -d. -f1)
+  minor=$(echo "$v" | cut -d. -f2)
+  patch=$(echo "$v" | cut -d. -f3)
+  patch=$((patch + 1))
+  next="${major}.${minor}.${patch}"
+  v_esc=$(echo "$v" | sed 's/\./\\./g')
+  tmp="${f}.bump.tmp"
+  # Allow optional whitespace around ":" (prettier / compact JSON)
+  sed -E "s/\"version\"[[:space:]]*:[[:space:]]*\"${v_esc}\"/\"version\": \"${next}\"/" "$f" > "$tmp" && mv "$tmp" "$f"
+  echo "$next" > "$ROOT/.git/ATLAS_BUMPED_VERSION"
+  return 0
+}
+
+bump_version_file() {
+  VFILE="$ROOT/VERSION"
+  if [ ! -f "$VFILE" ]; then
+    echo "0.1.0" > "$VFILE"
+    echo "0.1.0" > "$ROOT/.git/ATLAS_BUMPED_VERSION"
+  else
+    v=$(cat "$VFILE" | tr -d '[:space:]\0')
+    major=$(echo "$v" | cut -d. -f1)
+    minor=$(echo "$v" | cut -d. -f2)
+    patch=$(echo "$v" | cut -d. -f3)
+    patch=$((patch + 1))
+    next="${major}.${minor}.${patch}"
+    echo "$next" > "$VFILE"
+    echo "$next" > "$ROOT/.git/ATLAS_BUMPED_VERSION"
+  fi
+  git add VERSION
+}
+
+rm -f "$ROOT/.git/ATLAS_BUMPED_VERSION"
+
+if [ -f public/app-version.json ]; then
+  bump_json_version "public/app-version.json"
+  git add public/app-version.json
+elif [ -f app-version.json ]; then
+  bump_json_version "app-version.json"
+  git add app-version.json
+elif [ -f package.json ] && grep -qE '"version"[[:space:]]*:[[:space:]]*"[0-9]+\.[0-9]+\.[0-9]+"' package.json; then
+  bump_json_version "package.json"
+  git add package.json
+else
+  bump_version_file
+fi

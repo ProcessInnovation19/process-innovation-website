@@ -1,0 +1,19 @@
+---
+description: Baseline security requirements
+alwaysApply: true
+---
+
+# Security Baseline
+
+Always consider:
+
+- Auth and authorization boundaries
+- Input validation
+- Secret handling
+- SSRF, injection, and file upload risks
+- Tenant isolation if applicable
+- Data exposure in logs or errors
+- Least privilege principles
+- Safe environment variable usage
+
+Security-sensitive changes require explicit review notes.

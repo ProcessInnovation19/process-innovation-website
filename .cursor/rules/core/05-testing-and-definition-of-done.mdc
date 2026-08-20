@@ -1,0 +1,23 @@
+---
+description: Quality checks and definition of done
+alwaysApply: true
+---
+
+# Testing and Definition of Done
+
+A task is not done only because code compiles.
+
+**Definition of done:**
+
+- Requested behavior implemented
+- No obvious regressions introduced
+- Relevant tests updated or proposed
+- Manual verification steps listed when needed
+- Documentation updated if behavior changed
+- Git state clean and logically commit-ready
+
+**Prefer:**
+
+- Unit tests for local logic
+- Integration tests for API/data flow
+- E2E for critical user flows

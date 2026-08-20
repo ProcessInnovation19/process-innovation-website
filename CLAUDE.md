@@ -1,11 +1,17 @@
 # Claude / Opus — Project Instructions
 
-Questo repository contiene la fonte di verità per il nuovo sito di **Process & Innovation**.
+`GOAL.md` definisce l'obiettivo corrente del progetto e la **Definition of Done**.  
+`PROGRESS.md` è la checklist persistente: aggiornala mentre lavori.  
+**Non dichiarare il task completato** finché i criteri in `GOAL.md` non sono stati verificati (o resta solo un blocco reale documentato che richiede input umano).
 
-## Prima di scrivere codice
+Questo repository contiene la fonte di verità per il nuovo sito di **Process & Innovation**.  
+È allineato a **PI Foundry** (`.cursor/`, `docs/ai/`).
+
+## Prima di scrivere codice — ordine di lettura (ancora valido)
 
 Leggi integralmente, in questo ordine:
 
+0. `GOAL.md` e `PROGRESS.md` (dove arrivare + stato)
 1. `docs/00_VISION.md`
 2. `docs/01_BRAND_POSITIONING.md`
 3. `docs/02_AEP_SERVICE_MODEL.md`
@@ -17,28 +23,32 @@ Leggi integralmente, in questo ordine:
 9. `docs/08_OPEN_QUESTIONS.md`
 10. `docs/09_CURRENT_AP_REFERENCE.md`
 11. `docs/99_SOURCES.md`
+12. `brand/README.md` (logo + token colore)
 
 `09_CURRENT_AP_REFERENCE.md` fotografa il servizio/listino oggi in uso: serve per capire la base di partenza, ma non va trasformato automaticamente nel nuovo sito né pubblicato come listino.
 
 ## Obiettivo operativo
 
-Costruire una prima versione completa e navigabile del sito, coerente con i documenti. Il design deve avere personalità propria: **interfaccia/HUD futuristica da videogioco**, elegante e credibile per clienti business, non un template SaaS standard.
+Vedi `GOAL.md`. In sintesi: prima versione production-ready, navigabile, HUD futuristica, DoD verificata.
 
 ## Metodo
 
+- Work loop: analizzare → implementare → eseguire → verificare → correggere → rieseguire (dettaglio in `GOAL.md`).
 - Tratta i documenti in `docs/` come specifica di prodotto e contenuto.
-- Se un'informazione è indicata come aperta o da verificare, non trasformarla in un'affermazione pubblica definitiva.
-- I nomi di tecnologie e partner devono essere usati solo dove previsto dai documenti.
-- Mantieni testi e componenti modulari, perché verranno rifiniti successivamente in Cursor.
-- Prima implementa struttura, design system, componenti e motion language; poi completa tutte le sezioni.
-- Usa placeholder visivi chiaramente sostituibili quando manca un asset finale, senza bloccare lo sviluppo.
-- Non aspettare la risoluzione dei punti non bloccanti di `08_OPEN_QUESTIONS.md`: fai una prima build coerente e segnala ciò che resta da decidere.
+- Se un'informazione è aperta o da verificare, non trasformarla in affermazione pubblica definitiva.
+- I nomi di tecnologie e partner solo dove previsto dai documenti / `99_SOURCES`.
+- Mantieni testi e componenti modulari.
+- Prima: struttura, design system (colori da `brand/`), componenti e motion; poi tutte le sezioni.
+- Usa placeholder sostituibili quando manca un asset; **usa i logo in `brand/logo/`** per header/marchio.
+- Non bloccarti sui punti non bloccanti di `08_OPEN_QUESTIONS.md`: build coerente + segnala ciò che resta.
+- Aggiorna `PROGRESS.md` a ogni avanzamento rilevante.
 
-## Output atteso della prima fase
+## Output atteso
 
-1. progetto frontend avviabile localmente;
-2. homepage completa;
-3. pagine/sezioni servizio previste dalla sitemap;
-4. responsive desktop/tablet/mobile;
-5. animazioni e connessioni grafiche coerenti con `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`;
-6. README aggiornato con stack, avvio e struttura del progetto.
+Allineato alla Definition of Done in `GOAL.md` (sitemap, navigazione, HUD, motion, responsive, reduced-motion, build, lint/TS, contenuti fedeli, QA finale, README aggiornato).
+
+## Ripresa sessione
+
+Se la sessione si interrompe, alla ripresa:
+
+> Leggi `CLAUDE.md`, `GOAL.md` e `PROGRESS.md`. Continua fino alla Definition of Done.

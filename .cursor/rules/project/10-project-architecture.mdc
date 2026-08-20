@@ -1,0 +1,14 @@
+---
+description: Process & Innovation website architecture and stack direction
+alwaysApply: true
+---
+
+# Project architecture — P&I Website
+
+- Institutional website for Process & Innovation; core offer **A&P (Assistenza & Prevenzione)** = proactive managed IT.
+- Source of truth: `GOAL.md` (DoD) + numbered files in `docs/` (`00`→`09`, then `99_SOURCES`) + `brand/README.md`. Agent index: `docs/ai/`.
+- Update `PROGRESS.md` while working; do not claim done until DoD verified.
+- Implementation direction: Next/React + TypeScript, modern CSS/Tailwind, GSAP-like motion, SVG connections — no WebGL/Three requirement.
+- Brand tokens: `--pi-black #000000`, `--pi-blue-deep #30549C`, `--pi-blue-bright #3CA8E4`, `--pi-white #FFFFFF` (see `brand/`).
+- UX language: futuristic game-HUD, B2B-credible; see `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`.
+- Keep components/content/motion modular. Prefer small diffs when code appears.

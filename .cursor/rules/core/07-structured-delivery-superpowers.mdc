@@ -1,0 +1,16 @@
+---
+description: Superpowers-style analyze → plan → execute → verify before claiming done
+alwaysApply: false
+---
+
+# Structured delivery (Superpowers-inspired)
+
+For non-trivial tasks:
+
+1. **Analyze** — goal, constraints, touched areas, risks (`analyze-task`)
+2. **Plan** — short ordered steps; note tests/docs impact
+3. **Execute** — one step at a time; minimal diffs
+4. **Verify** — run the project’s typecheck/tests/build as appropriate
+5. **Record** — update docs/ai or CHANGELOG_AI when behavior changes
+
+Skip ceremony for trivial one-line fixes; never skip verify when logic changed.

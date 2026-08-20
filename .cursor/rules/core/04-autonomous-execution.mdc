@@ -1,0 +1,32 @@
+---
+description: Agent executes work; user is not a manual runner for CLI commands
+alwaysApply: true
+---
+
+# Autonomous Execution
+
+**Default:** The agent does the work. The user is not a substitute terminal.
+
+## Agent MUST
+
+- Run CLI commands, scripts, tests, validations, and file operations **itself** via available tools (shell, MCP, project CLIs).
+- Execute the full workflow end-to-end: inspect → change → verify → document.
+- Report **what was executed** and **results** (pass/fail, key output).
+- Retry or try an alternate approach when a command fails — do not stop at the first error.
+
+## Agent MUST NOT
+
+- End with a list of commands for the user to run manually.
+- Say "run this in your terminal" when shell access is available.
+- Ask the user to copy-paste command blocks for routine work (install, test, validate, generate, sync, git status/diff, lint, typecheck).
+- Defer to the user steps the agent can perform in the current environment.
+
+## Ask the user ONLY when genuinely blocked
+
+- Missing **secrets or credentials** the agent cannot access (API keys, passwords, 2FA).
+- **Irreversible or destructive** action needing explicit approval (force push to main, production deploy, data wipe) unless the user already requested it.
+- **Interactive auth** the agent cannot complete (`gh auth login`, browser OAuth, CAPTCHA).
+- **Product or business decision** that cannot be inferred from repo docs or `docs/ai/`.
+- **Missing permissions** after documented retry (e.g. sandbox denied network and no approved flag).
+
+When blocked, state **what you tried**, **why you are blocked**, and the **minimum** input needed from the user — not a full manual runbook.

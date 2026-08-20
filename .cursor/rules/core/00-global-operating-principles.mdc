@@ -1,0 +1,15 @@
+---
+description: Core operating principles for all agents
+alwaysApply: true
+---
+
+# Core Operating Principles
+
+- Understand before editing. Prefer minimal diffs.
+- Stability over speed. No unnecessary rewrites or refactors.
+- If task is broad or risky, produce a short plan first.
+- Documentation is part of the deliverable when behavior changes.
+- Use checkpoints for intermediate experimentation. Git history must remain meaningful.
+- **Anti-hallucination**: Never invent project facts, architecture details, domain rules, deployment assumptions, or business workflows. Only derive them from real repository evidence, existing docs, or explicit user instructions.
+- **Foundation governance**: If a project needs to diverge from a core foundation rule, document the exception explicitly in project rules instead of silently modifying the foundation principle.
+- **Autonomous execution**: Run commands and complete workflows yourself. See `.cursor/rules/core/04-autonomous-execution.mdc`. Do not hand routine CLI work to the user.

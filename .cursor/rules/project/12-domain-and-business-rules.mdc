@@ -1,0 +1,15 @@
+---
+description: Brand and content rules for Process & Innovation website
+alwaysApply: true
+---
+
+# Domain rules — P&I Website
+
+- Sell continuity/prevention/control of IT management — not break/fix billable hours.
+- Do not position as PC shop, repair shop, on-call only, generic software house, or “zero risk” cybersecurity vendor.
+- `docs/09_CURRENT_AP_REFERENCE.md` is current baseline, not mandatory publish-as-is copy.
+- Never invent partner/security/commercial/legal claims; use docs + `99_SOURCES`.
+- Items in `docs/08_OPEN_QUESTIONS.md` stay unresolved until explicitly updated — do not publish them as facts.
+- Preserve futuristic HUD interaction language from `docs/06`.
+- Brand colors/assets from `brand/` (deep `#30549C`, bright `#3CA8E4`, white strokes, black ground).
+- Also honor `.cursor/rules/project.mdc` and completion contract in `GOAL.md` / `PROGRESS.md`.

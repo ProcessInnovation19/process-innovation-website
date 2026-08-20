@@ -1,0 +1,13 @@
+---
+description: Branching, commit, and push policy
+alwaysApply: true
+---
+
+# Branching and Commit Policy
+
+- Branch strategy: `main`, `develop`, `feat/*`, `fix/*`, `hotfix/*`, `release/*`.
+- Never push directly to `main`.
+- Auto-commit only when scope is coherent, files consistent, no obvious breakage, minimal lint/test passed or WIP explicit.
+- No auto-commit when: work in progress and unclear, unexplained errors, refactor too broad, exploration phase.
+- Use conventional commit style: `feat(scope):`, `fix(scope):`, `docs(scope):`, `refactor(scope):`, `chore(scope):`, `test(scope):`.
+- **Task end states** (Relay reports at completion): `CHECKPOINT ONLY` (work saved locally, not commit-ready) | `COMMIT READY` (ready to commit, no push) | `COMMIT + PUSH READY` (ready to commit and push on allowed branches).
