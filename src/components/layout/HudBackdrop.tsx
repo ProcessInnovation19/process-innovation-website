@@ -7,7 +7,7 @@ import type { CSSProperties } from "react";
  * dipinta: i piani stanno a distanze diverse su un asse Z reale dentro una
  * `perspective`, quindi il puntatore e lo scroll producono parallasse vera
  * (vedi `PointerDepth`). Tre indizi lavorano insieme — parallasse fra i piani,
- * prospettiva del tunnel di telai, sbiadimento atmosferico di ciò che è
+ * prospettiva del tunnel di telai, opacità atmosferica di ciò che è
  * lontano.
  *
  * Tutto decorativo e non interattivo; si muovono solo `transform` e `opacity`.

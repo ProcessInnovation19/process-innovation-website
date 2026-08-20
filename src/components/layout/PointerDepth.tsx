@@ -13,6 +13,12 @@ import { useEffect } from "react";
  * Un solo listener per tutta la pagina: sfondo e ambiente della mappa leggono
  * le stesse variabili invece di installarne uno ciascuno.
  *
+ * Lo smorzamento del puntatore è in JS, non in CSS: una `transition` sul
+ * `transform` che usa variabili aggiornate a ogni frame fa ripartire
+ * l'interpolazione e produce lo scatto in scroll. Lo scroll è applicato
+ * subito, allineato al contenuto. Durante lo scroll le animazioni decorative
+ * si mettono in pausa (`html.is-scrolling`).
+ *
  * Non rende nulla nel DOM.
  */
 export function PointerDepth() {
@@ -24,22 +30,48 @@ export function PointerDepth() {
     const finePointer = window.matchMedia("(pointer: fine)");
 
     let frame: number | null = null;
+    let idleTimer: number | null = null;
+    let scrolling = false;
+
     let pointer = { x: 0, y: 0 };
+    let pointerTarget = { x: 0, y: 0 };
     let scroll = 0;
+
+    const setScrolling = (value: boolean) => {
+      if (scrolling === value) return;
+      scrolling = value;
+      root.classList.toggle("is-scrolling", value);
+    };
 
     const apply = () => {
       frame = null;
+
+      pointer.x += (pointerTarget.x - pointer.x) * 0.14;
+      pointer.y += (pointerTarget.y - pointer.y) * 0.14;
+
       root.style.setProperty("--pointer-x", pointer.x.toFixed(3));
       root.style.setProperty("--pointer-y", pointer.y.toFixed(3));
       root.style.setProperty("--scroll-depth", `${scroll.toFixed(1)}px`);
+
+      const chasing =
+        Math.abs(pointerTarget.x - pointer.x) > 0.002 ||
+        Math.abs(pointerTarget.y - pointer.y) > 0.002;
+
+      if (chasing) frame = requestAnimationFrame(apply);
     };
 
     const schedule = () => {
       if (frame == null) frame = requestAnimationFrame(apply);
     };
 
+    const readScroll = () => {
+      // smorzato e limitato: oltre una certa corsa la parallasse smetterebbe
+      // di leggersi come profondità e diventerebbe deriva
+      scroll = Math.min(window.scrollY * 0.35, 420);
+    };
+
     const onPointerMove = (event: PointerEvent) => {
-      pointer = {
+      pointerTarget = {
         x: (event.clientX / window.innerWidth - 0.5) * 2,
         y: (event.clientY / window.innerHeight - 0.5) * 2,
       };
@@ -47,15 +79,22 @@ export function PointerDepth() {
     };
 
     const onScroll = () => {
-      // smorzato e limitato: oltre una certa corsa la parallasse smetterebbe
-      // di leggersi come profondità e diventerebbe deriva
-      scroll = Math.min(window.scrollY * 0.35, 420);
+      readScroll();
+      setScrolling(true);
+      if (idleTimer != null) window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => {
+        idleTimer = null;
+        setScrolling(false);
+      }, 160);
       schedule();
     };
 
     const attach = () => {
       detach();
       if (reduced.matches) {
+        pointer = { x: 0, y: 0 };
+        pointerTarget = { x: 0, y: 0 };
+        scroll = 0;
         root.style.setProperty("--pointer-x", "0");
         root.style.setProperty("--pointer-y", "0");
         root.style.setProperty("--scroll-depth", "0px");
@@ -66,12 +105,22 @@ export function PointerDepth() {
         window.addEventListener("pointermove", onPointerMove, { passive: true });
       }
       window.addEventListener("scroll", onScroll, { passive: true });
-      onScroll();
+      readScroll();
+      schedule();
     };
 
     const detach = () => {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("scroll", onScroll);
+      if (idleTimer != null) {
+        window.clearTimeout(idleTimer);
+        idleTimer = null;
+      }
+      setScrolling(false);
+      if (frame != null) {
+        cancelAnimationFrame(frame);
+        frame = null;
+      }
     };
 
     attach();
@@ -82,7 +131,6 @@ export function PointerDepth() {
       detach();
       reduced.removeEventListener("change", attach);
       finePointer.removeEventListener("change", attach);
-      if (frame != null) cancelAnimationFrame(frame);
       root.style.removeProperty("--pointer-x");
       root.style.removeProperty("--pointer-y");
       root.style.removeProperty("--scroll-depth");

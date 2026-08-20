@@ -17,7 +17,9 @@
  * sovrascrivono e il movimento resta composito.
  *
  * Non ha bisogno di JavaScript: legge le variabili di profondità che
- * `PointerDepth` scrive una sola volta su `:root`.
+ * `PointerDepth` scrive su `:root`. Lo smorzamento del puntatore è in JS;
+ * lo scroll è applicato subito. Durante lo scroll le derive si mettono
+ * in pausa (`html.is-scrolling`).
  */
 export function MapAmbience() {
   return (

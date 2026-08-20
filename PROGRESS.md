@@ -34,6 +34,7 @@ Legenda: `[ ]` todo · `[~]` in corso · `[x]` fatto · `[!]` bloccato (serve um
 - [x] **Terminale di briefing** — voci al centro, riquadro visivo a sinistra e pannello di dettaglio a destra che si aprono alla selezione, collegati da linee SVG ridisegnate a ogni cambio
 - [x] Riquadro immagine per ciascuna sezione, valorizzabile da `navigation[].visual.src`
 - [x] **Sfondo con profondità reale** — piani su asse Z dentro una `perspective`, tunnel prospettico di telai, sbiadimento atmosferico, parallasse da puntatore e scroll (`HudBackdrop` + `PointerDepth`)
+- [x] **Scroll della mappa senza scatti** — puntatore interpolato in JS, scroll 1:1, derive in pausa durante lo scroll, niente blur sui piani in movimento
 
 ## Sitemap / sezioni (`docs/05`)
 
@@ -255,5 +256,6 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 | Data | Note |
 |------|------|
+| 2026-08-20 | Allineato lo scroll della mappa al compositor: niente transizione CSS sulle variabili di profondità, pause delle derive, rimosso blur sui piani in movimento. |
 | 2026-08-15 | Creati GOAL/PROGRESS; logo copiati in `brand/logo/`; ordine lettura docs confermato 00→09+99. Frontend non ancora scaffoldato. |
 | 2026-08-15 | Prima build production-ready: scaffold Next.js 16 + TS + Tailwind v4, design system HUD, layer di connessione SVG, 6 route della sitemap, form + route API, QA completa (tabella sopra) e 8 difetti corretti. |

@@ -155,6 +155,7 @@ body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  contain: paint;
   perspective: 1400px;
   perspective-origin: 50% 44%;
   background:
@@ -192,12 +193,12 @@ body {
   transform-style: preserve-3d;
   transform: rotateX(calc(var(--pointer-y) * -2.2deg))
     rotateY(calc(var(--pointer-x) * 2.6deg));
-  transition: transform 700ms var(--ease-hud);
 }
 
 .hud-backdrop__plane {
   position: absolute;
   inset: -30%;
+  backface-visibility: hidden;
 }
 
 /*
@@ -209,14 +210,12 @@ body {
 .hud-backdrop__plane--far {
   transform: translateZ(-1600px) scale(2.14)
     translateY(calc(var(--scroll-depth) * 0.12));
-  filter: blur(1.5px);
   opacity: 0.35;
 }
 
 .hud-backdrop__plane--mid {
   transform: translateZ(-800px) scale(1.57)
     translateY(calc(var(--scroll-depth) * 0.3));
-  filter: blur(0.4px);
   opacity: 0.75;
 }
 
@@ -439,7 +438,6 @@ body {
   position: absolute;
   inset: 0;
   opacity: 0.035;
-  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -518,7 +516,6 @@ body {
 
   .hud-backdrop__space {
     transform: none;
-    transition: none;
   }
 }
 
@@ -815,6 +812,7 @@ body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  contain: paint;
   perspective: 1100px;
   perspective-origin: 50% 40%;
 }
@@ -834,7 +832,7 @@ body {
     translateX(calc(var(--pointer-x) * 22px));
   mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 70%, transparent 100%);
   opacity: 0.32;
-  transition: transform 700ms var(--ease-hud);
+  backface-visibility: hidden;
 }
 
 /* le linee della piattaforma scorrono verso di noi: moto in avanti */
@@ -870,7 +868,6 @@ body {
   mask-image: radial-gradient(80% 65% at 50% 42%, #000 0%, transparent 88%);
   opacity: 0.55;
   transform: translate3d(calc(var(--pointer-x) * 14px), calc(var(--pointer-y) * 9px), 0);
-  transition: transform 700ms var(--ease-hud);
 }
 
 @keyframes motes-drift {
@@ -905,14 +902,9 @@ body {
  *
  * Vanno comunque tenute al limite del percettibile: `docs/06` esclude il
  * cyberpunk rumoroso, quindi devono leggersi come texture di un display, non
- * come glitch.
+ * come glitch. La texture è ferma: animarla a 1.6s su tutta la mappa
+ * costava più di quanto si vedesse.
  */
-@keyframes scanlines-rise {
-  to {
-    transform: translate3d(0, -4px, 0);
-  }
-}
-
 .map-ambience__scanlines {
   position: absolute;
   inset: -4px 0;
@@ -924,8 +916,6 @@ body {
   opacity: 0.5;
   /* sfumatura ai bordi: il disturbo non deve avere un taglio netto */
   mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  animation: scanlines-rise 1.6s linear infinite;
-  will-change: transform;
 }
 
 /*
@@ -991,11 +981,9 @@ body {
   0%,
   100% {
     opacity: 0.55;
-    transform: translate(-50%, -50%) scale(1);
   }
   50% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 0.88;
   }
 }
 
@@ -1007,6 +995,7 @@ body {
   width: 58rem;
   max-width: 150vw;
   border-radius: 9999px;
+  transform: translate(-50%, -50%);
   /* l'intensità è vincolata dal contrasto del microtesto che scorre sopra:
      vedi README §"Sfondo di sistema" */
   background: radial-gradient(
@@ -1014,7 +1003,6 @@ body {
     color-mix(in srgb, var(--color-hud-panel) 90%, transparent),
     transparent 100%
   );
-  filter: blur(26px);
   animation: map-pulse 16s ease-in-out infinite;
 }
 
@@ -1037,8 +1025,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .map-ambience__pulse,
   .map-ambience__deck-flow,
-  .map-ambience__motes-drift,
-  .map-ambience__scanlines {
+  .map-ambience__motes-drift {
     animation: none;
   }
 
@@ -1046,11 +1033,21 @@ body {
   .map-ambience__interference {
     display: none;
   }
+}
 
-  .map-ambience__deck,
-  .map-ambience__motes {
-    transition: none;
-  }
+/*
+ * Durante lo scroll il compositor deve seguire solo la parallasse.
+ * Le derive decorative riprendono a scroll fermo.
+ */
+html.is-scrolling .hud-backdrop__drift,
+html.is-scrolling .hud-backdrop__net-flow path,
+html.is-scrolling .hud-backdrop__net-nodes rect,
+html.is-scrolling .hud-backdrop__sweep,
+html.is-scrolling .map-ambience__deck-flow,
+html.is-scrolling .map-ambience__motes-drift,
+html.is-scrolling .map-ambience__interference,
+html.is-scrolling .map-ambience__pulse {
+  animation-play-state: paused;
 }
 
 /* =========================================================================

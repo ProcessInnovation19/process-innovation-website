@@ -2,6 +2,7 @@
 
 | Date | Change |
 |------|--------|
+| 2026-08-20 | Scroll della mappa: rimosse `transition` CSS sulle variabili di profondità, interpolazione puntatore in JS, pause delle derive su `html.is-scrolling`, niente `filter:blur` sui piani in movimento. |
 | 2026-08-15 | Bootstrap **PI Foundry** (`.cursor/` core/skills/agents, `docs/ai/`, githooks, `FOUNDATION_VERSION`). Mapped architecture/rules from existing `docs/` + `AGENTS.md`. Kept legacy `.cursor/rules/project.mdc`. |
 | 2026-08-15 | `GOAL.md` + `PROGRESS.md` + brand assets/colors for Claude Code / Cursor autonomy loop. |
 | 2026-08-17 | Sfondo con movimento autonomo (derive dei reticoli, impulsi lungo i collegamenti, piattaforma che scorre) e interferenza reintrodotta dopo il passaggio al tema chiaro, in versione **luminosa** per non intaccare il contrasto. Stabilizzato il layout della mappa: le voci non si spostano più al cambio di selezione. |
