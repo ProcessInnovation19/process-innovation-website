@@ -2,6 +2,7 @@
 
 | Date | Change |
 |------|--------|
+| 2026-08-21 | Mappa: timeout di sicurezza sullo svelamento (niente clip chiuso se `onLoad` non arriva) e bordo interno visibile sulle foto. |
 | 2026-08-21 | Mappa: lo svelamento alto→basso resta anche su mobile; il bilancio GPU toglie solo 3D e derive. |
 | 2026-08-21 | Mappa: lo svelamento parte a bitmap pronta, così al cambio voce l'immagine non compare tutta insieme dopo un ritardo. |
 | 2026-08-21 | Collegati i PNG ad alta risoluzione (`assets/process-innovation-visuals`, `da7c934`) ai `TechImageFrame`; rimossi i JPEG miniatura. |

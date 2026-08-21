@@ -765,8 +765,8 @@ body {
 
 .brief-scan {
   position: absolute;
-  inset-inline: 0;
-  top: 0;
+  inset-inline: var(--hud-border);
+  top: var(--hud-border);
   height: 14%;
   background: linear-gradient(
     to bottom,
@@ -775,23 +775,34 @@ body {
     transparent
   );
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
   opacity: 0;
 }
 
 .brief-visual-clip {
   position: absolute;
-  inset: 0;
+  inset: var(--hud-border);
   clip-path: inset(0 0 100% 0);
 }
 
 .brief-visual-clip--run {
+  clip-path: inset(0 0 0 0);
   animation: brief-image-reveal var(--brief-reveal) linear both;
 }
 
 .brief-visual--run .brief-scan {
   opacity: 1;
   animation: brief-scan var(--brief-reveal) linear both;
+}
+
+/* bordo interno: la foto coprirebbe altrimenti il tratto del pannello */
+.tech-image-frame::after {
+  content: "";
+  position: absolute;
+  inset: var(--hud-border);
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-hud-accent) 70%, var(--color-hud-line-strong));
 }
 
 /* riga che si estende sotto la voce selezionata */
