@@ -256,6 +256,7 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 | Data | Note |
 |------|------|
+| 2026-08-21 | Generato il set definitivo di 10 visual ad alta risoluzione in PNG (`public/visuals/`): cinque asset 1:1 per la mappa e cinque asset interni 16:9/4:5, coerenti con tema chiaro, palette brand e linguaggio HUD. Gli attuali riferimenti JPG restano invariati per l'inserimento controllato via Cursor. |
 | 2026-08-21 | Asset `public/visuals/` (commit ChatGPT `2b837ec`) collegati ai riquadri HUD. |
 | 2026-08-20 | Allineato lo scroll della mappa al compositor: niente transizione CSS sulle variabili di profondità, pause delle derive, rimosso blur sui piani in movimento. |
 | 2026-08-15 | Creati GOAL/PROGRESS; logo copiati in `brand/logo/`; ordine lettura docs confermato 00→09+99. Frontend non ancora scaffoldato. |
