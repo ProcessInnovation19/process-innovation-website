@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
@@ -31,6 +32,9 @@ const RATIO: Record<NonNullable<TechImageFrameProps["ratio"]>, string> = {
  * Finché `src` non è valorizzato mostra un placeholder HUD chiaramente
  * identificabile: l'asset definitivo si sostituisce passando `src`, senza
  * toccare il layout (docs/07 — Fase 6).
+ *
+ * `next/image` serve una variante ridimensionata (WebP/AVIF su Vercel): i PNG
+ * sorgente pesano ~2 MB e su mobile saturano decode + compositing.
  */
 export function TechImageFrame({
   label,
@@ -52,13 +56,12 @@ export function TechImageFrame({
       data-asset-placeholder={src ? undefined : "true"}
     >
       {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={src}
           alt={alt ?? caption}
-          className="absolute inset-0 h-full w-full object-cover opacity-90"
-          loading="lazy"
-          decoding="async"
+          fill
+          sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 70vw, 28rem"
+          className="object-cover opacity-90"
         />
       ) : (
         <div

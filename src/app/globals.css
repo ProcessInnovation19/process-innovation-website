@@ -780,7 +780,7 @@ body {
   z-index: 1;
 }
 
-.brief-visual > img {
+.brief-visual img {
   clip-path: inset(0 0 100% 0);
   animation: brief-image-reveal 2.6s 90ms linear both;
 }
@@ -808,7 +808,7 @@ body {
     display: none;
   }
 
-  .brief-visual > img {
+  .brief-visual img {
     animation: none;
     clip-path: none;
   }
@@ -1073,6 +1073,63 @@ html.is-scrolling .map-ambience__motes-drift,
 html.is-scrolling .map-ambience__interference,
 html.is-scrolling .map-ambience__pulse {
   animation-play-state: paused;
+}
+
+/*
+ * Bilancio GPU su telefono e tablet. La scena 2.5D, le derive a tutto schermo
+ * e il clip-path sulle PNG saturano il compositor (flash / lag). Resta la
+ * geometria HUD ferma: pannelli, nodi, linee. Allineato a `PointerDepth`.
+ */
+@media (max-width: 63.99rem), (hover: none) and (pointer: coarse) {
+  .hud-backdrop,
+  .map-ambience {
+    perspective: none;
+  }
+
+  .hud-backdrop__space,
+  .hud-backdrop__plane--far,
+  .hud-backdrop__plane--mid,
+  .hud-backdrop__plane--near,
+  .hud-backdrop__ring,
+  .map-ambience__deck,
+  .map-ambience__motes {
+    transform: none;
+  }
+
+  .hud-backdrop__drift,
+  .hud-backdrop__net-flow path,
+  .hud-backdrop__net-nodes rect,
+  .hud-backdrop__sweep,
+  .map-ambience__deck-flow,
+  .map-ambience__motes-drift,
+  .map-ambience__interference,
+  .map-ambience__pulse,
+  .brief-panel-left,
+  .brief-panel-right {
+    animation: none;
+    will-change: auto;
+  }
+
+  .hud-backdrop__tunnel,
+  .hud-backdrop__sweep,
+  .hud-backdrop__net-flow,
+  .map-ambience__deck,
+  .map-ambience__motes,
+  .map-ambience__scanlines,
+  .map-ambience__interference-field,
+  .map-ambience__pulse,
+  .brief-scan {
+    display: none;
+  }
+
+  .brief-visual img {
+    animation: none;
+    clip-path: none;
+  }
+
+  .js [data-reveal] {
+    will-change: auto;
+  }
 }
 
 /* =========================================================================

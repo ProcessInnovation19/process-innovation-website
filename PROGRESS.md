@@ -35,6 +35,7 @@ Legenda: `[ ]` todo · `[~]` in corso · `[x]` fatto · `[!]` bloccato (serve um
 - [x] Riquadro immagine per ciascuna sezione, valorizzabile da `navigation[].visual.src`
 - [x] **Sfondo con profondità reale** — piani su asse Z dentro una `perspective`, tunnel prospettico di telai, sbiadimento atmosferico, parallasse da puntatore e scroll (`HudBackdrop` + `PointerDepth`)
 - [x] **Scroll della mappa senza scatti** — puntatore interpolato in JS, scroll 1:1, derive in pausa durante lo scroll, niente blur sui piani in movimento
+- [x] **Bilancio GPU mobile** — niente parallasse 3D / derive / clip-path su compact e touch; `next/image` sui visual
 
 ## Sitemap / sezioni (`docs/05`)
 
@@ -256,7 +257,7 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 | Data | Note |
 |------|------|
-| 2026-08-21 | PNG ad alta risoluzione (`da7c934`) collegati agli slot HUD; JPEG miniatura rimossi. |
+| 2026-08-21 | Bilancio GPU mobile: niente 3D/derive/clip-path su compact e touch; visual via `next/image`. |
 | 2026-08-21 | Asset `public/visuals/` (commit ChatGPT `2b837ec`) collegati ai riquadri HUD. |
 | 2026-08-20 | Allineato lo scroll della mappa al compositor: niente transizione CSS sulle variabili di profondità, pause delle derive, rimosso blur sui piani in movimento. |
 | 2026-08-15 | Creati GOAL/PROGRESS; logo copiati in `brand/logo/`; ordine lettura docs confermato 00→09+99. Frontend non ancora scaffoldato. |

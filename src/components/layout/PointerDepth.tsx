@@ -2,6 +2,9 @@
 
 import { useEffect } from "react";
 
+/** Allineato al blocco CSS «bilancio GPU»: niente parallasse 3D su touch/compact. */
+const LIGHT_GPU = "(max-width: 63.99rem), (hover: none) and (pointer: coarse)";
+
 /**
  * Alimenta la profondità dello sfondo.
  *
@@ -19,6 +22,9 @@ import { useEffect } from "react";
  * subito, allineato al contenuto. Durante lo scroll le animazioni decorative
  * si mettono in pausa (`html.is-scrolling`).
  *
+ * Su viewport compatte o puntatore touch non scrive nulla: il compositor
+ * mobile non regge i piani 3D aggiornati in scroll.
+ *
  * Non rende nulla nel DOM.
  */
 export function PointerDepth() {
@@ -28,6 +34,7 @@ export function PointerDepth() {
     const root = document.documentElement;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const finePointer = window.matchMedia("(pointer: fine)");
+    const lightGpu = window.matchMedia(LIGHT_GPU);
 
     let frame: number | null = null;
     let idleTimer: number | null = null;
@@ -89,15 +96,20 @@ export function PointerDepth() {
       schedule();
     };
 
+    const freeze = () => {
+      pointer = { x: 0, y: 0 };
+      pointerTarget = { x: 0, y: 0 };
+      scroll = 0;
+      setScrolling(false);
+      root.style.setProperty("--pointer-x", "0");
+      root.style.setProperty("--pointer-y", "0");
+      root.style.setProperty("--scroll-depth", "0px");
+    };
+
     const attach = () => {
       detach();
-      if (reduced.matches) {
-        pointer = { x: 0, y: 0 };
-        pointerTarget = { x: 0, y: 0 };
-        scroll = 0;
-        root.style.setProperty("--pointer-x", "0");
-        root.style.setProperty("--pointer-y", "0");
-        root.style.setProperty("--scroll-depth", "0px");
+      if (reduced.matches || lightGpu.matches) {
+        freeze();
         return;
       }
 
@@ -126,11 +138,13 @@ export function PointerDepth() {
     attach();
     reduced.addEventListener("change", attach);
     finePointer.addEventListener("change", attach);
+    lightGpu.addEventListener("change", attach);
 
     return () => {
       detach();
       reduced.removeEventListener("change", attach);
       finePointer.removeEventListener("change", attach);
+      lightGpu.removeEventListener("change", attach);
       root.style.removeProperty("--pointer-x");
       root.style.removeProperty("--pointer-y");
       root.style.removeProperty("--scroll-depth");
