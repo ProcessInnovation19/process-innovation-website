@@ -66,7 +66,7 @@
 :root {
   /* --- Geometria --- */
   --hud-cut: 14px;
-  --hud-border: 1px;
+  --hud-border: 1.5px;
 
   /* --- Motion language (docs/06) --- */
   --dur-1: 140ms;  /* status  */
@@ -147,6 +147,9 @@ body {
    ========================================================================= */
 
 .hud-backdrop {
+  --pointer-x: 0;
+  --pointer-y: 0;
+  --scroll-depth: 0px;
   /* rientro del telaio strumentale */
   --frame-inset: 0.75rem;
   --frame-left: 0.75rem;
@@ -155,7 +158,8 @@ body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  contain: paint;
+  contain: layout paint style;
+  isolation: isolate;
   perspective: 1400px;
   perspective-origin: 50% 44%;
   background:
@@ -525,7 +529,12 @@ body {
 
 .hud-panel {
   --cut: var(--hud-cut);
-  --cut-inner: calc(var(--cut) - 1.5px);
+  /*
+   * Lo stesso taglio sul riempimento interno lascia una diagonale realmente
+   * visibile. Ridurre il taglio interno assottigliava il tratto obliquo fino
+   * a circa mezzo pixel, pur mantenendo leggibili i lati orizzontali.
+   */
+  --cut-inner: var(--cut);
   position: relative;
   z-index: 1;
   isolation: isolate;
@@ -577,7 +586,11 @@ body {
 
 /* variante "quiet": bordo più discreto per griglie fitte */
 .hud-panel--quiet {
-  background: color-mix(in srgb, var(--color-hud-line) 100%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-hud-line-strong) 72%,
+    var(--color-hud-line)
+  );
   filter: drop-shadow(0 6px 16px color-mix(in srgb, var(--color-hud-text-strong) 6%, transparent));
 }
 
@@ -719,15 +732,20 @@ body {
 }
 
 @keyframes brief-scan {
-  from {
+  0% {
     opacity: 1;
     transform: translateY(-100%);
   }
-  to {
+  88% {
     opacity: 1;
     /* 14% di altezza: -100% → 614% porta il bordo basso da 0% a 100% del riquadro,
        la stessa corsa del clip sull'immagine */
     transform: translateY(614%);
+  }
+  100% {
+    opacity: 1;
+    /* continua oltre il telaio: l'overflow lo fa sparire dentro il bordo basso */
+    transform: translateY(714%);
   }
 }
 
@@ -736,10 +754,11 @@ body {
  * clip è il bordo del disturbo.
  */
 @keyframes brief-image-reveal {
-  from {
+  0% {
     clip-path: inset(0 0 100% 0);
   }
-  to {
+  88%,
+  100% {
     clip-path: inset(0 0 0 0);
   }
 }
@@ -760,7 +779,7 @@ body {
 
 /* sweep di scansione sul riquadro immagine */
 .brief-visual {
-  --brief-reveal: 700ms;
+  --brief-reveal: 440ms;
 }
 
 .brief-scan {
@@ -790,9 +809,17 @@ body {
   animation: brief-image-reveal var(--brief-reveal) linear both;
 }
 
+.brief-visual-clip--revealed {
+  clip-path: none;
+}
+
 .brief-visual--run .brief-scan {
   opacity: 1;
   animation: brief-scan var(--brief-reveal) linear both;
+}
+
+.brief-visual--revealed .brief-scan {
+  display: none;
 }
 
 /* bordo interno: la foto coprirebbe altrimenti il tratto del pannello */
@@ -853,12 +880,16 @@ body {
    ========================================================================= */
 
 .map-ambience {
+  --pointer-x: 0;
+  --pointer-y: 0;
+  --scroll-depth: 0px;
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  contain: paint;
+  contain: layout paint style;
+  isolation: isolate;
   perspective: 1100px;
   perspective-origin: 50% 40%;
 }
@@ -1085,14 +1116,14 @@ body {
  * Durante lo scroll il compositor deve seguire solo la parallasse.
  * Le derive decorative riprendono a scroll fermo.
  */
-html.is-scrolling .hud-backdrop__drift,
-html.is-scrolling .hud-backdrop__net-flow path,
-html.is-scrolling .hud-backdrop__net-nodes rect,
-html.is-scrolling .hud-backdrop__sweep,
-html.is-scrolling .map-ambience__deck-flow,
-html.is-scrolling .map-ambience__motes-drift,
-html.is-scrolling .map-ambience__interference,
-html.is-scrolling .map-ambience__pulse {
+html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__drift,
+html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__net-flow path,
+html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__net-nodes rect,
+html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__sweep,
+html:is(.is-scrolling, .is-depth-moving) .map-ambience__deck-flow,
+html:is(.is-scrolling, .is-depth-moving) .map-ambience__motes-drift,
+html:is(.is-scrolling, .is-depth-moving) .map-ambience__interference,
+html:is(.is-scrolling, .is-depth-moving) .map-ambience__pulse {
   animation-play-state: paused;
 }
 

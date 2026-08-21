@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type AnimationEvent,
+  type ReactNode,
+} from "react";
 
 import { cn } from "@/lib/cn";
 import { SystemLabel } from "./SystemLabel";
@@ -34,6 +40,11 @@ const RATIO: Record<NonNullable<TechImageFrameProps["ratio"]>, string> = {
   tall: "aspect-[4/5]",
 };
 
+type RevealState = {
+  src?: string;
+  phase: "idle" | "running" | "revealed";
+};
+
 /**
  * Riquadro tecnico per immagini di infrastruttura.
  *
@@ -56,35 +67,49 @@ export function TechImageFrame({
   children,
 }: TechImageFrameProps) {
   const clipRef = useRef<HTMLDivElement>(null);
-  const [run, setRun] = useState(false);
+  const [reveal, setReveal] = useState<RevealState>({ src, phase: "idle" });
+  const phase = reveal.src === src ? reveal.phase : "idle";
+  const run = phase === "running";
+  const revealed = phase === "revealed";
 
   useEffect(() => {
-    if (!scanReveal || !src) {
-      setRun(false);
-      return;
-    }
+    if (!scanReveal || !src) return;
 
-    setRun(false);
     let cancelled = false;
 
     const go = () => {
-      if (!cancelled) setRun(true);
+      if (cancelled) return;
+      setReveal((current) =>
+        current.src === src && current.phase === "revealed"
+          ? current
+          : { src, phase: "running" },
+      );
     };
 
     const img = clipRef.current?.querySelector("img");
     if (img?.complete && img.naturalWidth > 0) {
-      go();
+      const frame = window.requestAnimationFrame(go);
       return () => {
         cancelled = true;
+        window.cancelAnimationFrame(frame);
       };
     }
 
-    const fallback = window.setTimeout(go, 160);
+    /*
+     * Copre il raro caso in cui il callback di Next/Image non arrivi, senza
+     * far correre il fascio davanti a una variante ottimizzata ancora in decode.
+     */
+    const fallback = window.setTimeout(go, 1200);
     return () => {
       cancelled = true;
       window.clearTimeout(fallback);
     };
   }, [scanReveal, src]);
+
+  const finishReveal = (event: AnimationEvent<HTMLDivElement>) => {
+    if (event.animationName !== "brief-image-reveal") return;
+    setReveal({ src, phase: "revealed" });
+  };
 
   return (
     <figure
@@ -94,6 +119,7 @@ export function TechImageFrame({
         src && "tech-image-frame",
         scanReveal && "brief-visual",
         scanReveal && run && "brief-visual--run",
+        scanReveal && revealed && "brief-visual--revealed",
         className,
       )}
       data-asset-placeholder={src ? undefined : "true"}
@@ -103,9 +129,14 @@ export function TechImageFrame({
           ref={scanReveal ? clipRef : undefined}
           className={cn(
             scanReveal
-              ? cn("brief-visual-clip", run && "brief-visual-clip--run")
+              ? cn(
+                  "brief-visual-clip",
+                  run && "brief-visual-clip--run",
+                  revealed && "brief-visual-clip--revealed",
+                )
               : "absolute inset-[var(--hud-border)]",
           )}
+          onAnimationEnd={scanReveal ? finishReveal : undefined}
         >
           <Image
             src={src}
@@ -113,7 +144,18 @@ export function TechImageFrame({
             fill
             sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 70vw, 28rem"
             className="object-cover opacity-90"
-            onLoad={scanReveal ? () => setRun(true) : undefined}
+            loading={scanReveal ? "eager" : "lazy"}
+            decoding="async"
+            onLoad={
+              scanReveal && !revealed
+                ? () =>
+                    setReveal((current) =>
+                      current.src === src && current.phase === "revealed"
+                        ? current
+                        : { src, phase: "running" },
+                    )
+                : undefined
+            }
           />
         </div>
       ) : (

@@ -36,6 +36,7 @@ Legenda: `[ ]` todo · `[~]` in corso · `[x]` fatto · `[!]` bloccato (serve um
 - [x] **Sfondo con profondità reale** — piani su asse Z dentro una `perspective`, tunnel prospettico di telai, sbiadimento atmosferico, parallasse da puntatore e scroll (`HudBackdrop` + `PointerDepth`)
 - [x] **Scroll della mappa senza scatti** — puntatore interpolato in JS, scroll 1:1, derive in pausa durante lo scroll, niente blur sui piani in movimento
 - [x] **Bilancio GPU mobile** — niente parallasse 3D / derive su compact e touch; `next/image` sui visual; svelamento mappa invariato
+- [x] **Fluidità desktop** — variabili di profondità locali ai layer, inseguimento puntatore più breve, derive in pausa durante l'input, containment dei fondi; nessun elemento della scena rimosso
 
 ## Sitemap / sezioni (`docs/05`)
 
@@ -257,7 +258,8 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 | Data | Note |
 |------|------|
-| 2026-08-21 | Bilancio GPU mobile: niente 3D/derive/clip-path su compact e touch; visual via `next/image`. |
+| 2026-08-22 | Reveal immagine a 440 ms con uscita del fascio nel bordo basso; diagonali HUD rinforzate. Profilo Lighthouse: immagini WebP 29 KB @640 / 69 KB @1080, quindi il lag persistente era soprattutto compositing. Variabili di profondità confinate ai layer, derive sospese durante l'input, cache immagini 7 giorni. |
+| 2026-08-21 | Bilancio GPU mobile: niente 3D/derive su compact e touch; svelamento mantenuto, visual via `next/image`. |
 | 2026-08-21 | Asset `public/visuals/` (commit ChatGPT `2b837ec`) collegati ai riquadri HUD. |
 | 2026-08-20 | Allineato lo scroll della mappa al compositor: niente transizione CSS sulle variabili di profondità, pause delle derive, rimosso blur sui piani in movimento. |
 | 2026-08-15 | Creati GOAL/PROGRESS; logo copiati in `brand/logo/`; ordine lettura docs confermato 00→09+99. Frontend non ancora scaffoldato. |
