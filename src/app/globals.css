@@ -719,26 +719,21 @@ body {
 }
 
 @keyframes brief-scan {
-  0% {
-    opacity: 0;
+  from {
+    opacity: 1;
     transform: translateY(-100%);
   }
-  12% {
+  to {
     opacity: 1;
-  }
-  88% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(1200%);
+    /* 14% di altezza: -100% → 614% porta il bordo basso da 0% a 100% del riquadro,
+       la stessa corsa del clip sull'immagine */
+    transform: translateY(614%);
   }
 }
 
 /*
- * L'immagine si svela a velocità costante, sull'intera corsa del fascio.
- * Con l'easing HUD (partenza rapida) il clip apriva quasi tutto nei primi
- * istanti e la scoperta non si leggeva.
+ * Stessa durata e stessa interpolazione lineare del fascio: il bordo del
+ * clip è il bordo del disturbo.
  */
 @keyframes brief-image-reveal {
   from {
@@ -764,6 +759,10 @@ body {
 }
 
 /* sweep di scansione sul riquadro immagine */
+.brief-visual {
+  --brief-reveal: 700ms;
+}
+
 .brief-scan {
   position: absolute;
   inset-inline: 0;
@@ -775,14 +774,24 @@ body {
     color-mix(in srgb, var(--color-hud-accent) 22%, transparent),
     transparent
   );
-  animation: brief-scan 2.6s linear both;
   pointer-events: none;
   z-index: 1;
+  opacity: 0;
 }
 
-.brief-visual img {
+.brief-visual-clip {
+  position: absolute;
+  inset: 0;
   clip-path: inset(0 0 100% 0);
-  animation: brief-image-reveal 2.6s 90ms linear both;
+}
+
+.brief-visual-clip--run {
+  animation: brief-image-reveal var(--brief-reveal) linear both;
+}
+
+.brief-visual--run .brief-scan {
+  opacity: 1;
+  animation: brief-scan var(--brief-reveal) linear both;
 }
 
 /* riga che si estende sotto la voce selezionata */
@@ -808,6 +817,7 @@ body {
     display: none;
   }
 
+  .brief-visual-clip,
   .brief-visual img {
     animation: none;
     clip-path: none;
@@ -1386,6 +1396,9 @@ html.is-scrolling .map-ambience__pulse {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  /* overlay sull'intera griglia: senza area occuperebbe la prima riga
+     e su mobile il riquadro visivo finirebbe sopra le voci */
+  grid-area: 1 / 1 / -1 / -1;
 }
 
 .hud-connections__path {

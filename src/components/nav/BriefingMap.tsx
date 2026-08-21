@@ -128,37 +128,15 @@ export function BriefingMap() {
           redrawKey={selected}
           className="grid flex-1 items-start gap-8 lg:min-h-[27.5rem] lg:grid-cols-[minmax(0,0.8fr)_23rem_minmax(0,1.05fr)] lg:gap-10"
         >
-          {/* riquadro visivo */}
-          <div
-            key={`visual-${selected}`}
-            className="brief-panel-left order-3 flex flex-col gap-3 lg:order-1"
-          >
-            <div className="flex items-center gap-2.5">
-              <ConnectionNode id="map-visual" />
-              <SystemLabel tone="active" className="tabular-nums">
-                {section.code}.IMG
-              </SystemLabel>
-              <SystemLabel className="ml-auto">{section.visual.label}</SystemLabel>
-            </div>
-
-            <TechImageFrame
-              code={`IMG.${section.code}`}
-              label={section.visual.label}
-              caption={section.visual.caption}
-              src={section.visual.src}
-              ratio="square"
-              className="brief-visual"
-            >
-              <span className="brief-scan" aria-hidden="true" />
-            </TechImageFrame>
-          </div>
-
-          {/* voci al centro */}
+          {/*
+           * DOM = ordine di lettura mobile: voci, visivo, dettaglio.
+           * Su desktop `lg:order-*` rimette il visivo a sinistra.
+           */}
           <div
             role="tablist"
             aria-orientation="vertical"
             aria-label="Sezioni del sito"
-            className="relative z-10 order-1 flex flex-col gap-2.5 lg:order-2"
+            className="relative z-10 flex flex-col gap-2.5 lg:order-2"
           >
             {sections.map((entry, index) => {
               const isSelected = index === selected;
@@ -233,10 +211,35 @@ export function BriefingMap() {
             })}
           </div>
 
+          {/* riquadro visivo — dopo le voci su mobile, a sinistra su desktop */}
+          <div
+            key={`visual-${selected}`}
+            className="brief-panel-left flex flex-col gap-3 lg:order-1"
+          >
+            <div className="flex items-center gap-2.5">
+              <ConnectionNode id="map-visual" />
+              <SystemLabel tone="active" className="tabular-nums">
+                {section.code}.IMG
+              </SystemLabel>
+              <SystemLabel className="ml-auto">{section.visual.label}</SystemLabel>
+            </div>
+
+            <TechImageFrame
+              code={`IMG.${section.code}`}
+              label={section.visual.label}
+              caption={section.visual.caption}
+              src={section.visual.src}
+              ratio="square"
+              scanReveal
+            >
+              <span className="brief-scan" aria-hidden="true" />
+            </TechImageFrame>
+          </div>
+
           {/* dettaglio della voce */}
           <div
             key={`detail-${selected}`}
-            className="brief-panel-right order-2 flex lg:order-3 lg:h-full"
+            className="brief-panel-right flex lg:order-3 lg:h-full"
           >
             <article
               id={PANEL_ID}

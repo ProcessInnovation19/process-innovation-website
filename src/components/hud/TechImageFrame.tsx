@@ -1,5 +1,7 @@
+"use client";
+
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
 import { SystemLabel } from "./SystemLabel";
@@ -16,6 +18,12 @@ type TechImageFrameProps = {
   alt?: string;
   className?: string;
   ratio?: "wide" | "square" | "tall";
+  /**
+   * Svela l'immagine dall'alto verso il basso insieme al fascio di scansione.
+   * Parte solo a bitmap pronta, altrimenti il clip gira a vuoto e poi l'asset
+   * (già in cache) compare tutto insieme.
+   */
+  scanReveal?: boolean;
   /** overlay decorativi ritagliati dal riquadro (es. linea di scansione) */
   children?: ReactNode;
 };
@@ -44,25 +52,58 @@ export function TechImageFrame({
   alt,
   className,
   ratio = "wide",
+  scanReveal = false,
   children,
 }: TechImageFrameProps) {
+  const clipRef = useRef<HTMLDivElement>(null);
+  const [run, setRun] = useState(false);
+
+  const start = useCallback(() => {
+    setRun(false);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setRun(true));
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!scanReveal || !src) return;
+    setRun(false);
+    const img = clipRef.current?.querySelector("img");
+    if (img?.complete && img.naturalWidth > 0) start();
+  }, [scanReveal, src, start]);
+
   return (
     <figure
       className={cn(
         "hud-panel hud-panel--quiet relative overflow-hidden",
         RATIO[ratio],
+        scanReveal && "brief-visual",
+        scanReveal && run && "brief-visual--run",
         className,
       )}
       data-asset-placeholder={src ? undefined : "true"}
     >
       {src ? (
-        <Image
-          src={src}
-          alt={alt ?? caption}
-          fill
-          sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 70vw, 28rem"
-          className="object-cover opacity-90"
-        />
+        scanReveal ? (
+          <div ref={clipRef} className={cn("brief-visual-clip", run && "brief-visual-clip--run")}>
+            <Image
+              src={src}
+              alt={alt ?? caption}
+              fill
+              sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 70vw, 28rem"
+              className="object-cover opacity-90"
+              onLoad={start}
+            />
+          </div>
+        ) : (
+          <Image
+            src={src}
+            alt={alt ?? caption}
+            fill
+            sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 70vw, 28rem"
+            className="object-cover opacity-90"
+          />
+        )
       ) : (
         <div
           aria-hidden="true"
