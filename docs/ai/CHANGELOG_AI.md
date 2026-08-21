@@ -2,6 +2,7 @@
 
 | Date | Change |
 |------|--------|
+| 2026-08-21 | Collegati gli asset `public/visuals/` (commit `2b837ec`) ai `TechImageFrame` della mappa e delle pagine. |
 | 2026-08-20 | Scroll della mappa: rimosse `transition` CSS sulle variabili di profondità, interpolazione puntatore in JS, pause delle derive su `html.is-scrolling`, niente `filter:blur` sui piani in movimento. |
 | 2026-08-15 | Bootstrap **PI Foundry** (`.cursor/` core/skills/agents, `docs/ai/`, githooks, `FOUNDATION_VERSION`). Mapped architecture/rules from existing `docs/` + `AGENTS.md`. Kept legacy `.cursor/rules/project.mdc`. |
 | 2026-08-15 | `GOAL.md` + `PROGRESS.md` + brand assets/colors for Claude Code / Cursor autonomy loop. |

@@ -34,9 +34,7 @@ export type SectionNode = NavNode & {
   /** tre punti chiave, mostrati nel pannello di dettaglio */
   highlights: string[];
   /**
-   * Riquadro visivo del briefing. `src` è vuoto finché non arrivano gli asset
-   * definitivi: senza `src` viene mostrato un placeholder HUD sostituibile
-   * senza toccare il layout.
+   * Riquadro visivo del briefing. `src` punta agli asset in `public/visuals/`.
    */
   visual: { label: string; caption: string; src?: string };
 };
@@ -72,6 +70,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Servizio",
       caption: "Rack e apparati di rete sotto gestione continuativa.",
+      src: "/visuals/map-01-servizio.jpg",
     },
   },
   {
@@ -89,6 +88,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Ambiente",
       caption: "Macro tecnologica di apparati e postazioni censite.",
+      src: "/visuals/map-02-ambiente.jpg",
     },
   },
   {
@@ -105,6 +105,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Soluzioni",
       caption: "Access point, router e linea di backup in sede.",
+      src: "/visuals/map-03-soluzioni.jpg",
     },
   },
   {
@@ -121,6 +122,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Identità",
       caption: "Postazioni di lavoro moderne in un ambiente standardizzato.",
+      src: "/visuals/map-04-identita.jpg",
     },
   },
   {
@@ -137,6 +139,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Contatto",
       caption: "Avvio della presa in carico: mappatura dell'ambiente.",
+      src: "/visuals/map-05-contatto.jpg",
     },
   },
 ];

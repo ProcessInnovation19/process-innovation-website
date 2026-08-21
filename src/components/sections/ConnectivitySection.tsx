@@ -66,6 +66,7 @@ export function ConnectivitySection() {
           code="IMG.03"
           label="Connettività"
           caption="Apparati di rete, access point e linea di backup in sede."
+          src="/visuals/page-connettivita.jpg"
           ratio="wide"
         />
       </Reveal>

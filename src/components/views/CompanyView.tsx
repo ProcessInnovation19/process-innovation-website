@@ -20,6 +20,7 @@ export function CompanyView({ inWindow = false }: { inWindow?: boolean }) {
             code="IMG.05"
             label="Postazioni"
             caption="Postazioni di lavoro moderne in un ambiente standardizzato."
+            src="/visuals/page-postazioni.jpg"
             ratio="wide"
           />
         }

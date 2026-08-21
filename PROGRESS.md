@@ -249,13 +249,14 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 ## Limitazioni note
 
-- Le immagini di infrastruttura sono placeholder HUD (`data-asset-placeholder`): visibili e chiaramente identificabili, sostituibili passando `src` a `TechImageFrame`.
+- Le immagini di infrastruttura sono in `public/visuals/` e collegate a `TechImageFrame` via `src`. I file del commit `2b837ec` sono anteprime basse (~280–360 px); tre JPEG sono troncati (manca EOI). Sostituibili senza toccare il layout.
 - La verifica visiva è stata fatta con misurazioni programmatiche sul DOM reale: nella sessione il pannello browser non era visualizzabile, quindi non ci sono screenshot. Consigliata una passata visiva su `npm run dev` prima della pubblicazione.
 
 ## Log sessioni
 
 | Data | Note |
 |------|------|
+| 2026-08-21 | Asset `public/visuals/` (commit ChatGPT `2b837ec`) collegati ai riquadri HUD. |
 | 2026-08-20 | Allineato lo scroll della mappa al compositor: niente transizione CSS sulle variabili di profondità, pause delle derive, rimosso blur sui piani in movimento. |
 | 2026-08-15 | Creati GOAL/PROGRESS; logo copiati in `brand/logo/`; ordine lettura docs confermato 00→09+99. Frontend non ancora scaffoldato. |
 | 2026-08-15 | Prima build production-ready: scaffold Next.js 16 + TS + Tailwind v4, design system HUD, layer di connessione SVG, 6 route della sitemap, form + route API, QA completa (tabella sopra) e 8 difetti corretti. |
