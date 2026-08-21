@@ -249,7 +249,7 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 ## Limitazioni note
 
-- Le immagini di infrastruttura sono in `public/visuals/` e collegate a `TechImageFrame` via `src`. I file del commit `2b837ec` sono anteprime basse (~280–360 px); tre JPEG sono troncati (manca EOI). Sostituibili senza toccare il layout.
+- Le immagini di infrastruttura sono PNG in `public/visuals/` (set ad alta risoluzione: mappa 1254×1254, pagine 1664×936 / 1120×1400). I JPEG miniatura del commit `2b837ec` vanno rimossi.
 - La verifica visiva è stata fatta con misurazioni programmatiche sul DOM reale: nella sessione il pannello browser non era visualizzabile, quindi non ci sono screenshot. Consigliata una passata visiva su `npm run dev` prima della pubblicazione.
 
 ## Log sessioni

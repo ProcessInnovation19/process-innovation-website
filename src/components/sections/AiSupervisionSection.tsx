@@ -59,7 +59,7 @@ export function AiSupervisionSection() {
               code="IMG.02"
               label="Segnali"
               caption="Visual astratto di flussi dati, eventi e nodi di rete."
-              src="/visuals/page-ai-segnali.jpg"
+              src="/visuals/page-ai-segnali.png"
               ratio="tall"
               className="h-full"
             />

@@ -20,7 +20,7 @@ export function ManageView({ inWindow = false }: { inWindow?: boolean }) {
             code="IMG.04"
             label="Ambiente gestito"
             caption="Macro tecnologica di apparati e postazioni sotto gestione."
-            src="/visuals/page-gestito-ambiente.jpg"
+            src="/visuals/page-gestito-ambiente.png"
             ratio="wide"
           />
         }

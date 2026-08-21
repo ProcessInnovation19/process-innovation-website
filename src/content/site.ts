@@ -70,7 +70,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Servizio",
       caption: "Rack e apparati di rete sotto gestione continuativa.",
-      src: "/visuals/map-01-servizio.jpg",
+      src: "/visuals/map-01-servizio.png",
     },
   },
   {
@@ -88,7 +88,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Ambiente",
       caption: "Macro tecnologica di apparati e postazioni censite.",
-      src: "/visuals/map-02-ambiente.jpg",
+      src: "/visuals/map-02-ambiente.png",
     },
   },
   {
@@ -105,7 +105,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Soluzioni",
       caption: "Access point, router e linea di backup in sede.",
-      src: "/visuals/map-03-soluzioni.jpg",
+      src: "/visuals/map-03-soluzioni.png",
     },
   },
   {
@@ -122,7 +122,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Identità",
       caption: "Postazioni di lavoro moderne in un ambiente standardizzato.",
-      src: "/visuals/map-04-identita.jpg",
+      src: "/visuals/map-04-identita.png",
     },
   },
   {
@@ -139,7 +139,7 @@ export const sections: SectionNode[] = [
     visual: {
       label: "Contatto",
       caption: "Avvio della presa in carico: mappatura dell'ambiente.",
-      src: "/visuals/map-05-contatto.jpg",
+      src: "/visuals/map-05-contatto.png",
     },
   },
 ];

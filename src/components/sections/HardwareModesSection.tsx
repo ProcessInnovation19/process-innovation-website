@@ -74,7 +74,7 @@ export function HardwareModesSection() {
           code="IMG.01"
           label="Infrastruttura"
           caption="Rack, cablaggio ordinato e apparati di rete gestiti."
-          src="/visuals/page-aep-infrastruttura.jpg"
+          src="/visuals/page-aep-infrastruttura.png"
           ratio="wide"
         />
       </Reveal>
