@@ -2,6 +2,7 @@
 
 | Date | Change |
 |------|--------|
+| 2026-08-21 | Mappa: l'immagine del briefing si svela dall'alto verso il basso insieme alla linea di scansione. |
 | 2026-08-21 | Collegati i PNG ad alta risoluzione (`assets/process-innovation-visuals`, `da7c934`) ai `TechImageFrame`; rimossi i JPEG miniatura. |
 | 2026-08-20 | Scroll della mappa: rimosse `transition` CSS sulle variabili di profondità, interpolazione puntatore in JS, pause delle derive su `html.is-scrolling`, niente `filter:blur` sui piani in movimento. |
 | 2026-08-15 | Bootstrap **PI Foundry** (`.cursor/` core/skills/agents, `docs/ai/`, githooks, `FOUNDATION_VERSION`). Mapped architecture/rules from existing `docs/` + `AGENTS.md`. Kept legacy `.cursor/rules/project.mdc`. |

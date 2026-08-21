@@ -735,6 +735,20 @@ body {
   }
 }
 
+/*
+ * L'immagine si svela a velocità costante, sull'intera corsa del fascio.
+ * Con l'easing HUD (partenza rapida) il clip apriva quasi tutto nei primi
+ * istanti e la scoperta non si leggeva.
+ */
+@keyframes brief-image-reveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 .brief-panel-left {
   animation: brief-in-left var(--dur-3) var(--ease-snap) both;
 }
@@ -761,8 +775,14 @@ body {
     color-mix(in srgb, var(--color-hud-accent) 22%, transparent),
     transparent
   );
-  animation: brief-scan var(--dur-5) var(--ease-hud) both;
+  animation: brief-scan 2.6s linear both;
   pointer-events: none;
+  z-index: 1;
+}
+
+.brief-visual > img {
+  clip-path: inset(0 0 100% 0);
+  animation: brief-image-reveal 2.6s 90ms linear both;
 }
 
 /* riga che si estende sotto la voce selezionata */
@@ -786,6 +806,11 @@ body {
 
   .brief-scan {
     display: none;
+  }
+
+  .brief-visual > img {
+    animation: none;
+    clip-path: none;
   }
 }
 

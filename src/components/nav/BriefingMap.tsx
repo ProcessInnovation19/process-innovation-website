@@ -147,6 +147,7 @@ export function BriefingMap() {
               caption={section.visual.caption}
               src={section.visual.src}
               ratio="square"
+              className="brief-visual"
             >
               <span className="brief-scan" aria-hidden="true" />
             </TechImageFrame>
