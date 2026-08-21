@@ -1076,9 +1076,9 @@ html.is-scrolling .map-ambience__pulse {
 }
 
 /*
- * Bilancio GPU su telefono e tablet. La scena 2.5D, le derive a tutto schermo
- * e il clip-path sulle PNG saturano il compositor (flash / lag). Resta la
- * geometria HUD ferma: pannelli, nodi, linee. Allineato a `PointerDepth`.
+ * Bilancio GPU su telefono e tablet. La scena 2.5D e le derive a tutto
+ * schermo saturano il compositor (flash / lag). Resta la geometria HUD e
+ * lo svelamento dell'immagine sulla mappa. Allineato a `PointerDepth`.
  */
 @media (max-width: 63.99rem), (hover: none) and (pointer: coarse) {
   .hud-backdrop,
@@ -1117,14 +1117,8 @@ html.is-scrolling .map-ambience__pulse {
   .map-ambience__motes,
   .map-ambience__scanlines,
   .map-ambience__interference-field,
-  .map-ambience__pulse,
-  .brief-scan {
+  .map-ambience__pulse {
     display: none;
-  }
-
-  .brief-visual img {
-    animation: none;
-    clip-path: none;
   }
 
   .js [data-reveal] {

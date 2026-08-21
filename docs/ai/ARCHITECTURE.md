@@ -80,7 +80,7 @@ Aggiungere una sezione richiede: una voce in `sections` (`src/content/site.ts`),
 - Linguaggio UI: **menu/HUD videogioco futuristico**, leggibile e credibile B2B (pannelli, linee/nodi, micro-motion).
 - Niente navigazione da sito istituzionale classico: nessun menu orizzontale nell'header, nessun hamburger che apre una lista di link.
 - Dettaglio: `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`.
-- Profondità: `PointerDepth` scrive `--pointer-x/y` e `--scroll-depth` su `:root` solo su desktop con puntatore fine. Su compact/touch il compositor non aggiorna i piani 3D; il CSS spegne prospettiva, derive e clip-path delle immagini (`@media (max-width: 63.99rem), (hover: none) and (pointer: coarse)`).
+- Profondità: `PointerDepth` scrive `--pointer-x/y` e `--scroll-depth` su `:root` solo su desktop con puntatore fine. Su compact/touch il compositor non aggiorna i piani 3D; il CSS spegne prospettiva e derive (`@media (max-width: 63.99rem), (hover: none) and (pointer: coarse)`). Lo svelamento dell'immagine sulla mappa resta.
 
 ## Content boundary
 

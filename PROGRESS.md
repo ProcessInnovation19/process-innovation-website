@@ -35,7 +35,7 @@ Legenda: `[ ]` todo · `[~]` in corso · `[x]` fatto · `[!]` bloccato (serve um
 - [x] Riquadro immagine per ciascuna sezione, valorizzabile da `navigation[].visual.src`
 - [x] **Sfondo con profondità reale** — piani su asse Z dentro una `perspective`, tunnel prospettico di telai, sbiadimento atmosferico, parallasse da puntatore e scroll (`HudBackdrop` + `PointerDepth`)
 - [x] **Scroll della mappa senza scatti** — puntatore interpolato in JS, scroll 1:1, derive in pausa durante lo scroll, niente blur sui piani in movimento
-- [x] **Bilancio GPU mobile** — niente parallasse 3D / derive / clip-path su compact e touch; `next/image` sui visual
+- [x] **Bilancio GPU mobile** — niente parallasse 3D / derive su compact e touch; `next/image` sui visual; svelamento mappa invariato
 
 ## Sitemap / sezioni (`docs/05`)
 
