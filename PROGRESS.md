@@ -27,6 +27,7 @@ Legenda: `[ ]` todo · `[~]` in corso · `[x]` fatto · `[!]` bloccato (serve um
 - [x] Componenti pannello / finestra HUD (`HudPanel`, angoli tagliati, header a modulo)
 - [x] Nodi + linee di connessione (SVG, `ConnectionField` + `geometry.ts` + `patterns.ts`)
 - [x] Micro-motion coordinate (`Reveal` boot/slide, scan line su header, status indicator)
+- [x] **Velo di avvio** — copertura dal primo paint (`html::before` + `#hud-boot`), pagina che si forma sotto, uscita a load; niente flash di pagina prima del velo
 - [x] Logo brand integrato in header e footer (`public/brand/wordmark.png`, favicon dal mark)
 - [x] `TechImageFrame` con placeholder sostituibili senza modificare il layout
 - [x] **Navigazione** — nessun menu nell'header e nessuna barra laterale: solo la barra di sistema, che riporta alla mappa (`src/components/nav/`)
@@ -258,6 +259,7 @@ Nessuno bloccante. I punti sotto restano aperti in `docs/08_OPEN_QUESTIONS.md` e
 
 | Data | Note |
 |------|------|
+| 2026-08-22 | Ripristinato il velo di avvio (copertura dal primo paint, poi pagina sotto, poi uscita). Linee della mappa di nuovo visibili; etichette visivo sopra il tratto, foto sotto. |
 | 2026-08-22 | Reveal immagine a 440 ms con uscita del fascio nel bordo basso; diagonali HUD rinforzate. Profilo Lighthouse: immagini WebP 29 KB @640 / 69 KB @1080, quindi il lag persistente era soprattutto compositing. Variabili di profondità confinate ai layer, derive sospese durante input e finestre, cache immagini 7 giorni. Follow-up verificato: reveal dopo decode, misure SVG deduplicate, varianti immagine 384/480 e logo corretto a 128 px; @390×844 0 animazioni continue e 0 overflow. |
 | 2026-08-21 | Bilancio GPU mobile: niente 3D/derive su compact e touch; svelamento mantenuto, visual via `next/image`. |
 | 2026-08-21 | Asset `public/visuals/` (commit ChatGPT `2b837ec`) collegati ai riquadri HUD. |

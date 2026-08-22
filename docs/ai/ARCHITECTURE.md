@@ -31,7 +31,7 @@ Dettagli operativi (install, dev, build, nota Windows su `&` nel path) in `READM
 | `src/components/connections/` | Layer SVG: `ConnectionField`, `geometry.ts`, `patterns.ts` |
 | `src/components/nav/` | Navigazione: `SystemNav`, `SystemBar`, `BriefingMap`, `SectionWindow` |
 | `src/components/hud/` | Linguaggio UI: pannelli, nodi, label, status, CTA, reveal |
-| `src/components/layout/` | Header, footer, sfondo, hero di pagina |
+| `src/components/layout/` | Header, footer, sfondo, velo di boot, hero di pagina |
 | `src/components/sections/` | Sezioni di contenuto riutilizzabili fra route |
 | `src/content/` | Copy tipizzata, con riferimento ai docs di origine e ai vincoli |
 | `src/lib/` | Hook e utility |

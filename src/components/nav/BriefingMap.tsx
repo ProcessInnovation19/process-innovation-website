@@ -157,7 +157,6 @@ export function BriefingMap() {
                     isSelected ? "hud-panel--active" : "hud-panel--quiet hud-panel--interactive",
                   )}
                 >
-                  {/* barra di stato a sinistra */}
                   <span
                     aria-hidden="true"
                     className={cn(
@@ -206,17 +205,23 @@ export function BriefingMap() {
             })}
           </div>
 
-          {/* riquadro visivo — dopo le voci su mobile, a sinistra su desktop */}
+          {/* riquadro visivo — dopo le voci su mobile, a sinistra su desktop.
+           * L'animazione sta solo sull'immagine: se avvolge tutta la colonna
+           * diventa uno stacking context e le linee SVG spariscono sotto.
+           * Etichette z-2, SVG z-1, foto z-auto → tratto dietro 01.IMG / label,
+           * davanti alla foto. */}
           <div
             key={`visual-${selected}`}
-            className="brief-panel-left flex flex-col gap-3 lg:order-1"
+            className="flex flex-col gap-3 lg:order-1"
           >
             <div className="flex items-center gap-2.5">
-              <ConnectionNode id="map-visual" />
-              <SystemLabel tone="active" className="tabular-nums">
+              <ConnectionNode id="map-visual" className="relative z-[2]" />
+              <SystemLabel tone="active" className="relative z-[2] bg-hud-bg px-0.5 tabular-nums">
                 {section.code}.IMG
               </SystemLabel>
-              <SystemLabel className="ml-auto">{section.visual.label}</SystemLabel>
+              <SystemLabel className="relative z-[2] ml-auto bg-hud-bg px-0.5">
+                {section.visual.label}
+              </SystemLabel>
             </div>
 
             <TechImageFrame
@@ -226,6 +231,7 @@ export function BriefingMap() {
               src={section.visual.src}
               ratio="square"
               scanReveal
+              className="brief-panel-left"
             >
               <span className="brief-scan" aria-hidden="true" />
             </TechImageFrame>
@@ -234,7 +240,7 @@ export function BriefingMap() {
           {/* dettaglio della voce */}
           <div
             key={`detail-${selected}`}
-            className="brief-panel-right flex lg:order-3 lg:h-full"
+            className="brief-panel-right relative z-[2] flex lg:order-3 lg:h-full"
           >
             <article
               id={PANEL_ID}

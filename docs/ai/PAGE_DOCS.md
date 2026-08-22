@@ -6,7 +6,7 @@ Mappa sezioni del sito. La copy/architettura canonica resta nei docs numerati (`
 
 | Route | Vista | Blocchi | Source docs |
 |-------|-------|---------|-------------|
-| `/` — **home = mappa** | `BriefingMap` | hero di `docs/05` + briefing delle cinque sezioni | `docs/05`, `docs/06` |
+| `/` — **home = mappa** | `BriefingMap` | payoff (`site.tagline`) + briefing delle cinque sezioni; all'apertura velo di boot in `layout.tsx` | `docs/05`, `docs/06` |
 | `/assistenza-e-prevenzione` | `AepView` | ModelComparison, HowItWorks, **Levels**, Outcomes, HardwareModes, ContactCta | `docs/02`, `docs/05` |
 | `/cosa-gestiamo` | `ManageView` | WhatWeManage, AiSupervision, EndpointSecurity, ContactCta | `docs/03`, `docs/05` |
 | `/soluzioni-e-partner` | `PartnersView` | quadro soluzioni, EndpointSecurity, AiSupervision, Connectivity, ContactCta | `docs/04`, `docs/99` |
