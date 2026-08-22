@@ -153,7 +153,7 @@ export function BriefingMap() {
                   onClick={() => select(index, false)}
                   onKeyDown={onTabKeyDown}
                   className={cn(
-                    "hud-panel hud-panel--tight group flex items-center gap-3.5 px-4 py-3.5 text-left",
+                    "hud-panel hud-panel--glass hud-panel--tight group flex items-center gap-3.5 px-4 py-3.5 text-left",
                     isSelected ? "hud-panel--active" : "hud-panel--quiet hud-panel--interactive",
                   )}
                 >
@@ -240,7 +240,7 @@ export function BriefingMap() {
               id={PANEL_ID}
               role="tabpanel"
               aria-labelledby={`briefing-tab-${section.code}`}
-              className="hud-panel flex w-full flex-col"
+              className="hud-panel hud-panel--glass flex w-full flex-col"
             >
               <CornerMarks />
 

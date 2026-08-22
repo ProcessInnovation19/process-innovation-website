@@ -606,6 +606,93 @@ body {
   background: color-mix(in srgb, var(--color-hud-accent) 62%, transparent);
 }
 
+/*
+ * Vetro — solo mappa/home. Il fondo del pannello resta trasparente: il
+ * riempimento è il ::before, così il blur vede lo spazio dietro e non il
+ * tratto del bordo. `filter` è spento perché impedisce backdrop-filter.
+ */
+.hud-panel--glass,
+.hud-panel--glass.hud-panel--quiet,
+.hud-panel--glass.hud-panel--active,
+.hud-panel--glass.hud-panel--interactive:hover,
+.hud-panel--glass.hud-panel--interactive:focus-within {
+  background: transparent;
+  filter: none;
+}
+
+.hud-panel--glass::before {
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--color-hud-panel) 62%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 34%, transparent) 52%,
+      color-mix(in srgb, var(--color-hud-bg-raised) 22%, transparent) 100%
+    );
+  border: var(--hud-border) solid color-mix(in srgb, var(--color-hud-line-strong) 58%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-hud-panel) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+}
+
+.hud-panel--glass > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hud-panel--glass.hud-panel--quiet::before {
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--color-hud-panel) 48%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 24%, transparent) 100%
+    );
+  border-color: color-mix(in srgb, var(--color-hud-line-strong) 42%, transparent);
+}
+
+.hud-panel--glass.hud-panel--active::before {
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--color-hud-panel) 70%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 42%, transparent) 100%
+    );
+  border-color: color-mix(in srgb, var(--color-hud-accent) 78%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-hud-panel) 80%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-hud-accent) 28%, transparent);
+}
+
+.hud-panel--glass.hud-panel--interactive:hover::before,
+.hud-panel--glass.hud-panel--interactive:focus-within::before {
+  border-color: color-mix(in srgb, var(--color-hud-accent) 55%, transparent);
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--color-hud-panel) 58%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 32%, transparent) 100%
+    );
+}
+
+@media (max-width: 63.99rem), (hover: none) and (pointer: coarse) {
+  .hud-panel--glass::before {
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .hud-panel--glass::before,
+  .hud-panel--glass.hud-panel--quiet::before,
+  .hud-panel--glass.hud-panel--active::before {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--color-hud-panel);
+    border-color: color-mix(in srgb, var(--color-hud-line-strong) 72%, transparent);
+  }
+}
+
 /* linea di scansione sull'header del pannello */
 .hud-panel__head {
   position: relative;
