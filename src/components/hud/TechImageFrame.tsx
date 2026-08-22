@@ -159,13 +159,10 @@ export function TechImageFrame({
         <div
           ref={scanReveal ? clipRef : undefined}
           className={cn(
-            scanReveal
-              ? cn(
-                  "brief-visual-clip",
-                  run && "brief-visual-clip--run",
-                  revealed && "brief-visual-clip--revealed",
-                )
-              : "absolute inset-[var(--hud-border)]",
+            "tech-image-frame__media",
+            scanReveal && "brief-visual-clip",
+            scanReveal && run && "brief-visual-clip--run",
+            scanReveal && revealed && "brief-visual-clip--revealed",
           )}
           onAnimationEnd={scanReveal ? finishReveal : undefined}
         >

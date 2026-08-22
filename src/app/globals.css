@@ -607,33 +607,67 @@ body {
 }
 
 /*
- * Vetro — solo mappa/home. Il fondo del pannello resta trasparente: il
- * riempimento è il ::before, così il blur vede lo spazio dietro e non il
- * tratto del bordo. `filter` è spento perché impedisce backdrop-filter.
+ * Vetro HUD — solo mappa/home. Il bordo resta il fondo del pannello (stesso
+ * taglio delle diagonali); il ::before è il vetro, con riflesso a specchio.
+ * `filter` è spento perché impedisce backdrop-filter.
  */
 .hud-panel--glass,
 .hud-panel--glass.hud-panel--quiet,
 .hud-panel--glass.hud-panel--active,
 .hud-panel--glass.hud-panel--interactive:hover,
 .hud-panel--glass.hud-panel--interactive:focus-within {
-  background: transparent;
+  background: color-mix(in srgb, var(--color-hud-panel) 78%, var(--color-hud-line-strong));
   filter: none;
 }
 
+.hud-panel--glass.hud-panel--active {
+  background: color-mix(in srgb, var(--color-hud-accent) 72%, var(--color-hud-panel));
+}
+
+.hud-panel--glass.hud-panel--interactive:hover,
+.hud-panel--glass.hud-panel--interactive:focus-within {
+  background: color-mix(in srgb, var(--color-hud-accent) 55%, var(--color-hud-panel));
+}
+
 .hud-panel--glass::before {
-  inset: 0;
+  inset: var(--hud-border);
   z-index: 0;
   background:
     linear-gradient(
-      155deg,
-      color-mix(in srgb, var(--color-hud-panel) 62%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 34%, transparent) 52%,
-      color-mix(in srgb, var(--color-hud-bg-raised) 22%, transparent) 100%
+      125deg,
+      color-mix(in srgb, var(--color-hud-panel) 46%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 14%, transparent) 36%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 10%, transparent) 68%,
+      color-mix(in srgb, var(--color-hud-bg) 16%, transparent) 100%
     );
-  border: var(--hud-border) solid color-mix(in srgb, var(--color-hud-line-strong) 58%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-hud-panel) 72%, transparent);
-  backdrop-filter: blur(18px) saturate(1.35);
-  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: blur(22px) saturate(1.7) brightness(1.06);
+  -webkit-backdrop-filter: blur(22px) saturate(1.7) brightness(1.06);
+}
+
+.hud-panel--glass::after {
+  content: "";
+  position: absolute;
+  inset: var(--hud-border);
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      118deg,
+      color-mix(in srgb, var(--color-hud-panel) 58%, transparent) 0%,
+      transparent 26%,
+      transparent 58%,
+      color-mix(in srgb, var(--color-hud-accent) 12%, transparent) 100%
+    );
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut-inner)) 0,
+    100% var(--cut-inner),
+    100% 100%,
+    var(--cut-inner) 100%,
+    0 calc(100% - var(--cut-inner))
+  );
 }
 
 .hud-panel--glass > * {
@@ -644,41 +678,27 @@ body {
 .hud-panel--glass.hud-panel--quiet::before {
   background:
     linear-gradient(
-      155deg,
-      color-mix(in srgb, var(--color-hud-panel) 48%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 24%, transparent) 100%
+      125deg,
+      color-mix(in srgb, var(--color-hud-panel) 34%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 10%, transparent) 42%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 8%, transparent) 100%
     );
-  border-color: color-mix(in srgb, var(--color-hud-line-strong) 42%, transparent);
 }
 
 .hud-panel--glass.hud-panel--active::before {
   background:
     linear-gradient(
-      155deg,
-      color-mix(in srgb, var(--color-hud-panel) 70%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 42%, transparent) 100%
-    );
-  border-color: color-mix(in srgb, var(--color-hud-accent) 78%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--color-hud-panel) 80%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, var(--color-hud-accent) 28%, transparent);
-}
-
-.hud-panel--glass.hud-panel--interactive:hover::before,
-.hud-panel--glass.hud-panel--interactive:focus-within::before {
-  border-color: color-mix(in srgb, var(--color-hud-accent) 55%, transparent);
-  background:
-    linear-gradient(
-      155deg,
-      color-mix(in srgb, var(--color-hud-panel) 58%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 32%, transparent) 100%
+      125deg,
+      color-mix(in srgb, var(--color-hud-panel) 52%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 16%, transparent) 40%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 12%, transparent) 100%
     );
 }
 
 @media (max-width: 63.99rem), (hover: none) and (pointer: coarse) {
   .hud-panel--glass::before {
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.35);
+    -webkit-backdrop-filter: blur(14px) saturate(1.35);
   }
 }
 
@@ -689,7 +709,10 @@ body {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: var(--color-hud-panel);
-    border-color: color-mix(in srgb, var(--color-hud-line-strong) 72%, transparent);
+  }
+
+  .hud-panel--glass::after {
+    content: none;
   }
 }
 
@@ -843,11 +866,13 @@ body {
  */
 @keyframes brief-image-reveal {
   0% {
-    clip-path: inset(0 0 100% 0);
+    -webkit-mask-size: 100% 0%;
+    mask-size: 100% 0%;
   }
   88%,
   100% {
-    clip-path: inset(0 0 0 0);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
   }
 }
 
@@ -887,18 +912,39 @@ body {
 }
 
 .brief-visual-clip {
-  position: absolute;
-  inset: var(--hud-border);
-  clip-path: inset(0 0 100% 0);
+  -webkit-mask-image: linear-gradient(#000, #000);
+  mask-image: linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: top;
+  mask-position: top;
+  -webkit-mask-size: 100% 0%;
+  mask-size: 100% 0%;
 }
 
 .brief-visual-clip--run {
-  clip-path: inset(0 0 0 0);
   animation: brief-image-reveal var(--brief-reveal) linear both;
 }
 
 .brief-visual-clip--revealed {
-  clip-path: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/* bordo interno: la foto segue il taglio, così le diagonali restano visibili */
+.tech-image-frame__media {
+  position: absolute;
+  inset: var(--hud-border);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut-inner)) 0,
+    100% var(--cut-inner),
+    100% 100%,
+    var(--cut-inner) 100%,
+    0 calc(100% - var(--cut-inner))
+  );
 }
 
 .brief-visual--run .brief-scan {
@@ -908,16 +954,6 @@ body {
 
 .brief-visual--revealed .brief-scan {
   display: none;
-}
-
-/* bordo interno: la foto coprirebbe altrimenti il tratto del pannello */
-.tech-image-frame::after {
-  content: "";
-  position: absolute;
-  inset: var(--hud-border);
-  z-index: 2;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-hud-accent) 70%, var(--color-hud-line-strong));
 }
 
 /* riga che si estende sotto la voce selezionata */
@@ -946,7 +982,8 @@ body {
   .brief-visual-clip,
   .brief-visual img {
     animation: none;
-    clip-path: none;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 
