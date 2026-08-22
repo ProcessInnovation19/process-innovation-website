@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 
 import { HudBackdrop } from "@/components/layout/HudBackdrop";
+import { HudBootOverlay } from "@/components/layout/HudBootOverlay";
 import { PointerDepth } from "@/components/layout/PointerDepth";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SystemNav } from "@/components/nav/SystemNav";
@@ -80,6 +81,7 @@ export default function RootLayout({
           Salta al contenuto
         </a>
 
+        <HudBootOverlay />
         <PointerDepth />
         <HudBackdrop />
         <SystemNav />

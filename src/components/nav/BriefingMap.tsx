@@ -18,8 +18,7 @@ import {
 } from "@/components/connections/ConnectionField";
 import { CornerMarks, StatusIndicator, SystemLabel, TechImageFrame } from "@/components/hud";
 import { MapAmbience } from "@/components/layout/MapAmbience";
-import { hero } from "@/content/aep";
-import { sections } from "@/content/site";
+import { sections, site } from "@/content/site";
 
 /** Sotto questa larghezza del field il briefing si impila. */
 const SIDE_BY_SIDE = 900;
@@ -96,13 +95,9 @@ export function BriefingMap() {
             </span>
           </div>
 
-          <h1 className="max-w-[20ch] text-balance text-3xl leading-[1.05] font-semibold tracking-tight text-hud-text-strong sm:text-4xl xl:text-5xl">
-            {hero.headline}
+          <h1 className="max-w-[22ch] text-balance text-3xl leading-[1.05] font-semibold tracking-tight text-hud-text-strong sm:text-4xl xl:text-5xl">
+            {site.tagline}
           </h1>
-
-          <p className="max-w-2xl text-pretty text-base leading-relaxed text-hud-text-dim">
-            {hero.subheadline}
-          </p>
         </div>
 
         {/* ------------------------------------------------------ briefing */}

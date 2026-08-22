@@ -11,6 +11,10 @@ export const site = {
    * è un punto aperto (docs/08 — Brand). Qui la ragione sociale compare solo come
    * riferimento societario nel footer, non come payoff.
    */
+  /**
+   * Payoff pubblico: mappa (hero), boot overlay e footer.
+   * Il payoff istituzionale definitivo resta aperto in docs/08 §Brand.
+   */
   tagline: "Gestione IT continuativa e proattiva",
   description:
     "Process & Innovation gestisce rete, PC, server, backup, sicurezza e servizi digitali con Assistenza & Prevenzione: una gestione IT continuativa, non assistenza a guasto.",

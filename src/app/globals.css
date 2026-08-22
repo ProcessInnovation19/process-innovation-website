@@ -1117,14 +1117,14 @@ body {
  * Durante lo scroll il compositor deve seguire solo la parallasse.
  * Le derive decorative riprendono a scroll fermo.
  */
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__drift,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__net-flow path,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__net-nodes rect,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__sweep,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__deck-flow,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__motes-drift,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__interference,
-html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__pulse {
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .hud-backdrop__drift,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .hud-backdrop__net-flow path,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .hud-backdrop__net-nodes rect,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .hud-backdrop__sweep,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambience__deck-flow,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambience__motes-drift,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambience__interference,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambience__pulse {
   animation-play-state: paused;
 }
 
@@ -1600,5 +1600,133 @@ html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__pulse {
 
   .hud-panel__head::after {
     width: 100%;
+  }
+}
+
+/* =========================================================================
+   Boot overlay — inizializzazione interfaccia al primo caricamento
+   ========================================================================= */
+
+.hud-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--color-hud-bg) 94%, var(--color-hud-text-strong) 6%);
+  padding: var(--shell-pad);
+  pointer-events: auto;
+}
+
+.hud-boot__panel {
+  width: min(100%, 26rem);
+  border: var(--hud-border) solid color-mix(in srgb, var(--color-hud-line-strong) 70%, transparent);
+  background: var(--color-hud-panel);
+  box-shadow:
+    0 24px 80px color-mix(in srgb, var(--color-hud-text-strong) 14%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-hud-line) 40%, transparent);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--hud-cut)) 0,
+    100% var(--hud-cut),
+    100% 100%,
+    var(--hud-cut) 100%,
+    0 calc(100% - var(--hud-cut))
+  );
+  animation: hud-boot-in var(--dur-3) var(--ease-snap) both;
+}
+
+.hud-boot__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-hud-line-strong) 55%, transparent);
+  background: color-mix(in srgb, var(--color-hud-bg-raised) 92%, transparent);
+  padding: 0.75rem 1rem;
+}
+
+.hud-boot__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.75rem 1.5rem 1.5rem;
+}
+
+.hud-boot__track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-hud-line) 70%, transparent);
+}
+
+.hud-boot__fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-hud-accent-deep),
+    var(--color-hud-accent),
+    color-mix(in srgb, var(--color-hud-accent) 70%, var(--color-pi-blue-bright) 30%)
+  );
+  transition: width 120ms var(--ease-hud);
+}
+
+.hud-boot__scan {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 28vh;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--color-hud-accent) 10%, transparent),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hud-boot--exit {
+  animation: hud-boot-out var(--dur-3) var(--ease-hud) forwards;
+  pointer-events: none;
+}
+
+.hud-boot--exit .hud-boot__scan {
+  animation: window-scan 680ms var(--ease-hud) both;
+}
+
+@keyframes hud-boot-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hud-boot-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-boot,
+  .hud-boot__panel,
+  .hud-boot--exit,
+  .hud-boot--exit .hud-boot__scan {
+    animation: none !important;
+  }
+
+  .hud-boot__fill {
+    transition: none;
   }
 }
