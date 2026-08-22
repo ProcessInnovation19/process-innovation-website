@@ -635,10 +635,9 @@ body {
   background:
     linear-gradient(
       125deg,
-      color-mix(in srgb, var(--color-hud-panel) 46%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 14%, transparent) 36%,
-      color-mix(in srgb, var(--color-pi-blue-bright) 10%, transparent) 68%,
-      color-mix(in srgb, var(--color-hud-bg) 16%, transparent) 100%
+      color-mix(in srgb, var(--color-hud-panel) 78%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 58%, transparent) 42%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 14%, var(--color-hud-panel) 38%) 100%
     );
   border: 0;
   box-shadow: none;
@@ -679,9 +678,9 @@ body {
   background:
     linear-gradient(
       125deg,
-      color-mix(in srgb, var(--color-hud-panel) 34%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 10%, transparent) 42%,
-      color-mix(in srgb, var(--color-pi-blue-bright) 8%, transparent) 100%
+      color-mix(in srgb, var(--color-hud-panel) 68%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 48%, transparent) 48%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 10%, var(--color-hud-panel) 32%) 100%
     );
 }
 
@@ -689,9 +688,9 @@ body {
   background:
     linear-gradient(
       125deg,
-      color-mix(in srgb, var(--color-hud-panel) 52%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 16%, transparent) 40%,
-      color-mix(in srgb, var(--color-pi-blue-bright) 12%, transparent) 100%
+      color-mix(in srgb, var(--color-hud-panel) 82%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 62%, transparent) 44%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 12%, var(--color-hud-panel) 42%) 100%
     );
 }
 
