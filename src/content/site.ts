@@ -12,7 +12,7 @@ export const site = {
    * riferimento societario nel footer, non come payoff.
    */
   /**
-   * Payoff pubblico: mappa (hero), boot overlay e footer.
+   * Payoff pubblico: mappa (hero) e footer.
    * Il payoff istituzionale definitivo resta aperto in docs/08 §Brand.
    */
   tagline: "Gestione IT continuativa e proattiva",

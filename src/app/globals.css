@@ -1604,7 +1604,7 @@ html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambie
 }
 
 /* =========================================================================
-   Boot overlay — inizializzazione interfaccia al primo caricamento
+   Boot overlay — velo come l'apertura cartella del sinottico
    ========================================================================= */
 
 .hud-boot {
@@ -1613,102 +1613,90 @@ html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambie
   z-index: 80;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--color-hud-bg) 94%, var(--color-hud-text-strong) 6%);
-  padding: var(--shell-pad);
+  background: color-mix(in srgb, var(--color-hud-bg) 72%, transparent);
+  backdrop-filter: blur(6px);
   pointer-events: auto;
+  animation: hud-boot-veil-in 220ms ease both;
 }
 
-.hud-boot__panel {
-  width: min(100%, 26rem);
-  border: var(--hud-border) solid color-mix(in srgb, var(--color-hud-line-strong) 70%, transparent);
-  background: var(--color-hud-panel);
-  box-shadow:
-    0 24px 80px color-mix(in srgb, var(--color-hud-text-strong) 14%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--color-hud-line) 40%, transparent);
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--hud-cut)) 0,
-    100% var(--hud-cut),
-    100% 100%,
-    var(--hud-cut) 100%,
-    0 calc(100% - var(--hud-cut))
-  );
-  animation: hud-boot-in var(--dur-3) var(--ease-snap) both;
-}
-
-.hud-boot__head {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-hud-line-strong) 55%, transparent);
-  background: color-mix(in srgb, var(--color-hud-bg-raised) 92%, transparent);
-  padding: 0.75rem 1rem;
-}
-
-.hud-boot__body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1.75rem 1.5rem 1.5rem;
-}
-
-.hud-boot__track {
-  position: relative;
-  width: 100%;
-  height: 4px;
+.hud-boot__field {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  background: color-mix(in srgb, var(--color-hud-line) 70%, transparent);
+  pointer-events: none;
 }
 
-.hud-boot__fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--color-hud-accent-deep),
-    var(--color-hud-accent),
-    color-mix(in srgb, var(--color-hud-accent) 70%, var(--color-pi-blue-bright) 30%)
-  );
-  transition: width 120ms var(--ease-hud);
+.hud-boot__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 220vmax;
+  height: 220vmax;
+  border: 1px solid var(--color-hud-accent);
+  border-radius: 50%;
+  animation: hud-boot-ring 900ms cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+.hud-boot__ring--delayed {
+  animation-delay: 260ms;
 }
 
 .hud-boot__scan {
   position: absolute;
   inset-inline: 0;
   top: 0;
-  height: 28vh;
+  height: 6rem;
   background: linear-gradient(
     to bottom,
     transparent,
-    color-mix(in srgb, var(--color-hud-accent) 10%, transparent),
+    color-mix(in srgb, var(--color-hud-accent) 25%, transparent),
     transparent
   );
-  opacity: 0;
-  pointer-events: none;
+  animation: hud-boot-scan 1100ms cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.hud-boot__caption {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding-inline: 1.5rem;
+  text-align: center;
+}
+
+.hud-boot__kicker {
+  animation: hud-boot-label-in 420ms var(--ease-snap) both;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-hud-accent);
+}
+
+.hud-boot__title {
+  max-width: 28rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-hud-text-strong);
 }
 
 .hud-boot--exit {
-  animation: hud-boot-out var(--dur-3) var(--ease-hud) forwards;
+  animation: hud-boot-veil-out 280ms ease forwards;
   pointer-events: none;
 }
 
-.hud-boot--exit .hud-boot__scan {
-  animation: window-scan 680ms var(--ease-hud) both;
-}
-
-@keyframes hud-boot-in {
+@keyframes hud-boot-veil-in {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
-@keyframes hud-boot-out {
+@keyframes hud-boot-veil-out {
   from {
     opacity: 1;
   }
@@ -1718,15 +1706,43 @@ html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambie
   }
 }
 
+@keyframes hud-boot-ring {
+  from {
+    transform: translate(-50%, -50%) scale(0.04);
+    opacity: 0.85;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes hud-boot-scan {
+  from {
+    transform: translateY(-110%);
+  }
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+@keyframes hud-boot-label-in {
+  from {
+    opacity: 0;
+    letter-spacing: 0.5em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.22em;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hud-boot,
-  .hud-boot__panel,
-  .hud-boot--exit,
-  .hud-boot--exit .hud-boot__scan {
+  .hud-boot__ring,
+  .hud-boot__scan,
+  .hud-boot__kicker,
+  .hud-boot--exit {
     animation: none !important;
-  }
-
-  .hud-boot__fill {
-    transition: none;
   }
 }
