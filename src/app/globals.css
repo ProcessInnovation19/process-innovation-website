@@ -1613,10 +1613,9 @@ html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambie
   z-index: 80;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--color-hud-bg) 72%, transparent);
+  background: color-mix(in srgb, var(--color-hud-bg) 78%, transparent);
   backdrop-filter: blur(6px);
   pointer-events: auto;
-  animation: hud-boot-veil-in 220ms ease both;
 }
 
 .hud-boot__field {
@@ -1683,17 +1682,8 @@ html:is(.is-scrolling, .is-depth-moving, .is-modal-open, .is-booting) .map-ambie
 }
 
 .hud-boot--exit {
-  animation: hud-boot-veil-out 280ms ease forwards;
+  animation: hud-boot-veil-out 320ms ease forwards;
   pointer-events: none;
-}
-
-@keyframes hud-boot-veil-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 @keyframes hud-boot-veil-out {

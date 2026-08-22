@@ -56,9 +56,9 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${inter.variable} ${jetbrains.variable}`}
-      // Lo script inline qui sotto aggiunge la classe `js` a <html> prima
-      // dell'idratazione: la differenza con l'HTML del server è voluta.
+      className={`${inter.variable} ${jetbrains.variable} is-booting`}
+      // Lo script inline qui sotto aggiunge `js` e marca l'avvio prima del
+      // primo paint: la differenza con l'HTML del server è voluta.
       suppressHydrationWarning
     >
       <head>
@@ -66,10 +66,18 @@ export default function RootLayout({
          * Marca il documento come "con JavaScript" prima del primo paint.
          * Le animazioni di ingresso sono vincolate a `.js`: senza script il
          * contenuto resta visibile invece di restare a opacità zero.
+         * Il velo di boot è CSS inline così copre dal primo frame, prima del bundle.
          */}
         <script
           dangerouslySetInnerHTML={{
-            __html: "document.documentElement.classList.add('js')",
+            __html:
+              "document.documentElement.classList.add('js');window.__hudBootStarted=performance.now();",
+          }}
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              "html:not(.js) #hud-boot{display:none!important}#hud-boot{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:#edf1f7}",
           }}
         />
       </head>
@@ -80,6 +88,25 @@ export default function RootLayout({
         >
           Salta al contenuto
         </a>
+
+        <div
+          id="hud-boot"
+          className="hud-boot"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          aria-label="Caricamento interfaccia di sistema"
+        >
+          <div className="hud-boot__field" aria-hidden="true">
+            <span className="hud-boot__ring" />
+            <span className="hud-boot__ring hud-boot__ring--delayed" />
+            <span className="hud-boot__scan" />
+          </div>
+          <div className="hud-boot__caption">
+            <p className="hud-boot__kicker">Avvio sistema</p>
+            <p className="hud-boot__title">{site.name}</p>
+          </div>
+        </div>
 
         <HudBootOverlay />
         <PointerDepth />
