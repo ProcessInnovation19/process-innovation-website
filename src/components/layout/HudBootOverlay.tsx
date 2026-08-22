@@ -6,17 +6,14 @@ const MIN_VISIBLE_MS = 1400;
 const EXIT_MS = 320;
 
 /**
- * Non disegna il velo: quello è HTML del layout, visibile dal primo paint.
- * Qui resta solo lo spegnimento, dopo che la pagina sotto è pronta.
+ * Il velo vive nel markup del layout (html::before + #hud-boot).
+ * Qui: mostra la pagina opacizzata sotto, poi spegne il velo a pagina pronta.
  */
 export function HudBootOverlay() {
   useEffect(() => {
     const root = document.documentElement;
     const veil = document.getElementById("hud-boot");
-    if (!veil) {
-      root.classList.remove("is-booting");
-      return;
-    }
+    root.classList.add("is-booting");
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const started =
@@ -24,11 +21,17 @@ export function HudBootOverlay() {
 
     let cancelled = false;
     let exitTimer = 0;
+    let revealTimer = 0;
+
+    const revealBehind = () => {
+      if (cancelled) return;
+      root.classList.add("is-boot-ready");
+    };
 
     const dismiss = () => {
       if (cancelled) return;
-      root.classList.remove("is-booting");
-      veil.remove();
+      root.classList.remove("is-booting", "is-boot-ready", "hud-boot--exit");
+      veil?.remove();
     };
 
     const exit = () => {
@@ -37,8 +40,9 @@ export function HudBootOverlay() {
         dismiss();
         return;
       }
-      veil.classList.add("hud-boot--exit");
-      veil.setAttribute("aria-busy", "false");
+      root.classList.add("hud-boot--exit");
+      veil?.classList.add("hud-boot--exit");
+      veil?.setAttribute("aria-busy", "false");
       exitTimer = window.setTimeout(dismiss, EXIT_MS);
     };
 
@@ -49,6 +53,14 @@ export function HudBootOverlay() {
       exit();
     };
 
+    if (reduced) {
+      revealBehind();
+    } else if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", revealBehind, { once: true });
+    } else {
+      revealTimer = window.setTimeout(revealBehind, 120);
+    }
+
     if (document.readyState === "complete") {
       void finish();
     } else {
@@ -58,6 +70,7 @@ export function HudBootOverlay() {
     return () => {
       cancelled = true;
       window.clearTimeout(exitTimer);
+      window.clearTimeout(revealTimer);
     };
   }, []);
 

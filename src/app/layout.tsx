@@ -63,32 +63,32 @@ export default function RootLayout({
     >
       <head>
         {/*
-         * Marca il documento come "con JavaScript" prima del primo paint.
-         * Le animazioni di ingresso sono vincolate a `.js`: senza script il
-         * contenuto resta visibile invece di restare a opacità zero.
-         * Il velo di boot è CSS inline così copre dal primo frame, prima del bundle.
+         * Copertura dal primo byte: html::before, non un div nel body.
+         * Così la pagina non può dipingere sopra al velo mentre lo stream arriva.
+         * Senza JS il noscript toglie il velo.
          */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "document.documentElement.classList.add('js');window.__hudBootStarted=performance.now();",
+              "document.documentElement.classList.add('js','is-booting');window.__hudBootStarted=performance.now();",
           }}
         />
         <style
           dangerouslySetInnerHTML={{
-            __html:
-              "html:not(.js) #hud-boot{display:none!important}#hud-boot{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:#edf1f7}",
+            __html: [
+              "html.is-booting{background:#edf1f7}",
+              "html.is-booting::before{content:'';position:fixed;inset:0;z-index:2147483646;background:#edf1f7;pointer-events:auto;transition:opacity .32s ease,background .28s ease}",
+              "html.is-booting.is-boot-ready::before{background:rgba(237,241,247,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}",
+              "html.is-booting.hud-boot--exit::before{opacity:0}",
+              "#hud-boot{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;pointer-events:auto}",
+            ].join(""),
           }}
         />
+        <noscript>
+          <style>{`html.is-booting::before,#hud-boot{display:none!important}html.is-booting{background:transparent}`}</style>
+        </noscript>
       </head>
       <body className="min-h-screen antialiased">
-        <a
-          href="#contenuto"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-hud-accent focus:px-4 focus:py-2 focus:text-sm focus:text-hud-on-accent"
-        >
-          Salta al contenuto
-        </a>
-
         <div
           id="hud-boot"
           className="hud-boot"
@@ -107,6 +107,13 @@ export default function RootLayout({
             <p className="hud-boot__title">{site.name}</p>
           </div>
         </div>
+
+        <a
+          href="#contenuto"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-hud-accent focus:px-4 focus:py-2 focus:text-sm focus:text-hud-on-accent"
+        >
+          Salta al contenuto
+        </a>
 
         <HudBootOverlay />
         <PointerDepth />
