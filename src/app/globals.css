@@ -627,13 +627,13 @@ body {
   background:
     linear-gradient(
       125deg,
-      color-mix(in srgb, var(--color-hud-panel) 42%, transparent) 0%,
-      color-mix(in srgb, var(--color-hud-panel) 18%, transparent) 46%,
-      color-mix(in srgb, var(--color-pi-blue-bright) 12%, transparent) 100%
+      color-mix(in srgb, var(--color-hud-panel) 62%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 38%, transparent) 46%,
+      color-mix(in srgb, var(--color-pi-blue-bright) 14%, transparent) 100%
     ),
     linear-gradient(
       118deg,
-      color-mix(in srgb, var(--color-hud-panel) 38%, transparent) 0%,
+      color-mix(in srgb, var(--color-hud-panel) 48%, transparent) 0%,
       transparent 32%,
       transparent 64%,
       color-mix(in srgb, var(--color-hud-accent) 10%, transparent) 100%
