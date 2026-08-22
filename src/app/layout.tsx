@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 
 import { HudBackdrop } from "@/components/layout/HudBackdrop";
-import { HudBootOverlay } from "@/components/layout/HudBootOverlay";
 import { PointerDepth } from "@/components/layout/PointerDepth";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SystemNav } from "@/components/nav/SystemNav";
@@ -56,58 +55,24 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${inter.variable} ${jetbrains.variable} is-booting`}
-      // Lo script inline qui sotto aggiunge `js` e marca l'avvio prima del
-      // primo paint: la differenza con l'HTML del server è voluta.
+      className={`${inter.variable} ${jetbrains.variable}`}
+      // Lo script inline qui sotto aggiunge la classe `js` a <html> prima
+      // dell'idratazione: la differenza con l'HTML del server è voluta.
       suppressHydrationWarning
     >
       <head>
         {/*
-         * Copertura dal primo byte: html::before, non un div nel body.
-         * Così la pagina non può dipingere sopra al velo mentre lo stream arriva.
-         * Senza JS il noscript toglie il velo.
+         * Marca il documento come "con JavaScript" prima del primo paint.
+         * Le animazioni di ingresso sono vincolate a `.js`: senza script il
+         * contenuto resta visibile invece di restare a opacità zero.
          */}
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              "document.documentElement.classList.add('js','is-booting');window.__hudBootStarted=performance.now();",
+            __html: "document.documentElement.classList.add('js')",
           }}
         />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: [
-              "html.is-booting{background:#edf1f7}",
-              "html.is-booting::before{content:'';position:fixed;inset:0;z-index:2147483646;background:#edf1f7;pointer-events:auto;transition:opacity .32s ease,background .28s ease}",
-              "html.is-booting.is-boot-ready::before{background:rgba(237,241,247,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}",
-              "html.is-booting.hud-boot--exit::before{opacity:0}",
-              "#hud-boot{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;pointer-events:auto}",
-            ].join(""),
-          }}
-        />
-        <noscript>
-          <style>{`html.is-booting::before,#hud-boot{display:none!important}html.is-booting{background:transparent}`}</style>
-        </noscript>
       </head>
       <body className="min-h-screen antialiased">
-        <div
-          id="hud-boot"
-          className="hud-boot"
-          role="status"
-          aria-live="polite"
-          aria-busy="true"
-          aria-label="Caricamento interfaccia di sistema"
-        >
-          <div className="hud-boot__field" aria-hidden="true">
-            <span className="hud-boot__ring" />
-            <span className="hud-boot__ring hud-boot__ring--delayed" />
-            <span className="hud-boot__scan" />
-          </div>
-          <div className="hud-boot__caption">
-            <p className="hud-boot__kicker">Avvio sistema</p>
-            <p className="hud-boot__title">{site.name}</p>
-          </div>
-        </div>
-
         <a
           href="#contenuto"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-hud-accent focus:px-4 focus:py-2 focus:text-sm focus:text-hud-on-accent"
@@ -115,7 +80,6 @@ export default function RootLayout({
           Salta al contenuto
         </a>
 
-        <HudBootOverlay />
         <PointerDepth />
         <HudBackdrop />
         <SystemNav />
