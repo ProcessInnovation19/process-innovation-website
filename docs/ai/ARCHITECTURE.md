@@ -46,7 +46,7 @@ Elemento caratterizzante (`docs/06`). Regole architetturali:
 
 - gli anchor sono elementi reali registrati nel `ConnectionField` tramite context;
 - i path sono calcolati da `getBoundingClientRect()` nello spazio locale del layer — **mai** coordinate hardcoded;
-- il ricalcolo avviene su `ResizeObserver` (contenitore e anchor), `resize`, `orientationchange`, `document.fonts.ready`, `transitionend` delle animazioni di ingresso e `visibilitychange`;
+- il ricalcolo avviene su `ResizeObserver` (contenitore e anchor), `resize`, `orientationchange`, `document.fonts.ready`, `transitionend` delle animazioni di ingresso e `visibilitychange`; gli eventi sono riuniti in una sola misura per frame e ogni anchor condiviso viene letto una sola volta;
 - l'animazione di ingresso usa `pathLength="1"` + `stroke-dashoffset`, neutralizzata da `prefers-reduced-motion`;
 - `patterns.ts` degrada il ventaglio hub→moduli a catena quando il contenitore è stretto, così su mobile le linee restano corte.
 
@@ -80,7 +80,7 @@ Aggiungere una sezione richiede: una voce in `sections` (`src/content/site.ts`),
 - Linguaggio UI: **menu/HUD videogioco futuristico**, leggibile e credibile B2B (pannelli, linee/nodi, micro-motion).
 - Niente navigazione da sito istituzionale classico: nessun menu orizzontale nell'header, nessun hamburger che apre una lista di link.
 - Dettaglio: `docs/06_VISUAL_AND_INTERACTION_DIRECTION.md`.
-- Profondità: `PointerDepth` scrive `--pointer-x/y` e `--scroll-depth` direttamente su `.hud-backdrop` / `.map-ambience`, evitando di invalidare gli stili dell'intera pagina. Su desktop l'inseguimento del puntatore mette temporaneamente in pausa le derive autonome; su compact/touch il CSS spegne prospettiva e derive (`@media (max-width: 63.99rem), (hover: none) and (pointer: coarse)`). Lo svelamento dell'immagine sulla mappa resta.
+- Profondità: `PointerDepth` scrive `--pointer-x/y` e `--scroll-depth` direttamente su `.hud-backdrop` / `.map-ambience`, evitando di invalidare gli stili dell'intera pagina. Su desktop l'inseguimento del puntatore mette temporaneamente in pausa le derive autonome; una finestra di sezione congela anche input e animazioni dello sfondo sotto il blur. Su compact/touch il CSS spegne prospettiva e derive (`@media (max-width: 63.99rem), (hover: none) and (pointer: coarse)`). Lo svelamento dell'immagine sulla mappa resta e parte solo dopo `HTMLImageElement.decode()`.
 
 ## Content boundary
 

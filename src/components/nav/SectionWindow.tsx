@@ -43,12 +43,16 @@ export function SectionWindow({ code, label, children }: SectionWindowProps) {
 
   /* --- blocco dello scroll di pagina e focus iniziale --- */
   useEffect(() => {
+    const root = document.documentElement;
     const previousOverflow = document.body.style.overflow;
+    root.classList.add("is-modal-open");
     document.body.style.overflow = "hidden";
+    window.dispatchEvent(new Event("pi:depth-freeze"));
 
     closeRef.current?.focus();
 
     return () => {
+      root.classList.remove("is-modal-open");
       document.body.style.overflow = previousOverflow;
     };
   }, []);

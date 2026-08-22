@@ -29,6 +29,7 @@ export function SiteFooter() {
           alt={site.name}
           width={1053}
           height={540}
+          sizes="63px"
           className="h-8 w-auto flex-none"
         />
 

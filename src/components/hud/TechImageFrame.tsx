@@ -75,7 +75,11 @@ export function TechImageFrame({
   useEffect(() => {
     if (!scanReveal || !src) return;
 
+    const img = clipRef.current?.querySelector("img");
     let cancelled = false;
+    let settled = false;
+    let frame: number | null = null;
+    let fallback: number | null = null;
 
     const go = () => {
       if (cancelled) return;
@@ -86,23 +90,50 @@ export function TechImageFrame({
       );
     };
 
-    const img = clipRef.current?.querySelector("img");
-    if (img?.complete && img.naturalWidth > 0) {
-      const frame = window.requestAnimationFrame(go);
-      return () => {
-        cancelled = true;
-        window.cancelAnimationFrame(frame);
-      };
+    /*
+     * `load` indica che i byte sono arrivati; `decode()` aspetta anche la bitmap.
+     * In questo modo decode e clip-path non competono durante i 440 ms del reveal.
+     */
+    const startDecoded = () => {
+      if (!img || settled || cancelled) return;
+      const decoded =
+        typeof img.decode === "function" ? img.decode().catch(() => undefined) : Promise.resolve();
+
+      void decoded.then(() => {
+        if (settled || cancelled) return;
+        settled = true;
+        frame = window.requestAnimationFrame(go);
+      });
+    };
+
+    const revealWithoutScan = () => {
+      if (settled || cancelled) return;
+      settled = true;
+      setReveal({ src, phase: "revealed" });
+    };
+
+    if (!img) {
+      revealWithoutScan();
+    } else if (img.complete) {
+      if (img.naturalWidth > 0) startDecoded();
+      else revealWithoutScan();
+    } else {
+      img.addEventListener("load", startDecoded, { once: true });
+      img.addEventListener("error", revealWithoutScan, { once: true });
+
+      /* Safety net: un errore/callback perso non deve lasciare il clip chiuso. */
+      fallback = window.setTimeout(() => {
+        if (img.complete && img.naturalWidth > 0) startDecoded();
+        else revealWithoutScan();
+      }, 2000);
     }
 
-    /*
-     * Copre il raro caso in cui il callback di Next/Image non arrivi, senza
-     * far correre il fascio davanti a una variante ottimizzata ancora in decode.
-     */
-    const fallback = window.setTimeout(go, 1200);
     return () => {
       cancelled = true;
-      window.clearTimeout(fallback);
+      if (frame != null) window.cancelAnimationFrame(frame);
+      if (fallback != null) window.clearTimeout(fallback);
+      img?.removeEventListener("load", startDecoded);
+      img?.removeEventListener("error", revealWithoutScan);
     };
   }, [scanReveal, src]);
 
@@ -146,16 +177,6 @@ export function TechImageFrame({
             className="object-cover opacity-90"
             loading={scanReveal ? "eager" : "lazy"}
             decoding="async"
-            onLoad={
-              scanReveal && !revealed
-                ? () =>
-                    setReveal((current) =>
-                      current.src === src && current.phase === "revealed"
-                        ? current
-                        : { src, phase: "running" },
-                    )
-                : undefined
-            }
           />
         </div>
       ) : (
@@ -173,9 +194,12 @@ export function TechImageFrame({
           <SystemLabel>{label}</SystemLabel>
         </div>
 
-        <div className="max-w-[36ch] bg-hud-bg/75 p-2 text-xs leading-relaxed text-hud-text-dim backdrop-blur-sm">
-          {src ? caption : <>Placeholder asset — {caption}</>}
-        </div>
+        {/* Testo guida solo senza asset: con l'immagine resta solo il chrome HUD. */}
+        {!src ? (
+          <div className="max-w-[36ch] bg-hud-bg/75 p-2 text-xs leading-relaxed text-hud-text-dim backdrop-blur-sm">
+            Placeholder asset — {caption}
+          </div>
+        ) : null}
       </figcaption>
     </figure>
   );

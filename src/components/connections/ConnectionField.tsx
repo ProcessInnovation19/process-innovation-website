@@ -109,17 +109,28 @@ export function ConnectionField({ edges, children, className, redrawKey }: Conne
     if (origin.width === 0 || origin.height === 0) return;
 
     const next: ComputedEdge[] = [];
+    const centers = new Map<string, Point>();
+
+    const centerFor = (id: string) => {
+      const cached = centers.get(id);
+      if (cached) return cached;
+
+      const anchor = anchors.current.get(id);
+      if (!anchor) return undefined;
+
+      const center = localCenter(anchor.getBoundingClientRect(), origin);
+      centers.set(id, center);
+      return center;
+    };
 
     for (const edge of edges) {
       if (edge.minFieldWidth != null && origin.width < edge.minFieldWidth) continue;
       if (edge.maxFieldWidth != null && origin.width > edge.maxFieldWidth) continue;
 
-      const a = anchors.current.get(edge.from);
-      const b = anchors.current.get(edge.to);
-      if (!a || !b) continue;
-
-      const from = localCenter(a.getBoundingClientRect(), origin);
-      const to = localCenter(b.getBoundingClientRect(), origin);
+      /* Un anchor condiviso da più linee viene misurato una sola volta per frame. */
+      const from = centerFor(edge.from);
+      const to = centerFor(edge.to);
+      if (!from || !to) continue;
 
       next.push({
         key: `${edge.from}__${edge.to}`,
@@ -148,9 +159,6 @@ export function ConnectionField({ edges, children, className, redrawKey }: Conne
     // fallback le linee resterebbero non calcolate finché la tab non torna
     // visibile. Il timeout copre quel caso, la rAF batcha le letture di layout
     // insieme al paint quando la pagina è visibile.
-    if (frameRef.current != null) cancelAnimationFrame(frameRef.current);
-    if (timerRef.current != null) clearTimeout(timerRef.current);
-
     const run = () => {
       frameRef.current = null;
       timerRef.current = null;
@@ -158,10 +166,17 @@ export function ConnectionField({ edges, children, className, redrawKey }: Conne
     };
 
     if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+      if (timerRef.current != null) return;
+      if (frameRef.current != null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
       timerRef.current = window.setTimeout(run, 0);
       return;
     }
 
+    /* Più eventi nello stesso frame leggono tutti la geometria finale: uno basta. */
+    if (frameRef.current != null || timerRef.current != null) return;
     frameRef.current = requestAnimationFrame(run);
   }, [measure]);
 
@@ -203,9 +218,19 @@ export function ConnectionField({ edges, children, className, redrawKey }: Conne
     // Ricalcoliamo quando il movimento è finito — sia per transizioni sia per
     // animazioni, perché il briefing usa `@keyframes` per poterle rigiocare.
     const onTransitionEnd = (event: TransitionEvent) => {
-      if (event.propertyName === "transform") scheduleMeasure();
+      if (
+        event.propertyName === "transform" &&
+        event.target instanceof HTMLElement &&
+        event.target.hasAttribute("data-reveal")
+      ) {
+        scheduleMeasure();
+      }
     };
-    const onAnimationEnd = () => scheduleMeasure();
+    const onAnimationEnd = (event: AnimationEvent) => {
+      if (event.animationName === "brief-in-left" || event.animationName === "brief-in-right") {
+        scheduleMeasure();
+      }
+    };
 
     root.addEventListener("transitionend", onTransitionEnd);
     root.addEventListener("animationend", onAnimationEnd);

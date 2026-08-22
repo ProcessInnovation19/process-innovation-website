@@ -75,6 +75,7 @@ export function PointerDepth() {
 
     const apply = () => {
       frame = null;
+      if (root.classList.contains("is-modal-open")) return;
 
       pointer.x += (pointerTarget.x - pointer.x) * POINTER_EASE;
       pointer.y += (pointerTarget.y - pointer.y) * POINTER_EASE;
@@ -105,6 +106,7 @@ export function PointerDepth() {
     };
 
     const onPointerMove = (event: PointerEvent) => {
+      if (root.classList.contains("is-modal-open")) return;
       pointerTarget = {
         x: (event.clientX / window.innerWidth - 0.5) * 2,
         y: (event.clientY / window.innerHeight - 0.5) * 2,
@@ -119,6 +121,7 @@ export function PointerDepth() {
     };
 
     const onScroll = () => {
+      if (root.classList.contains("is-modal-open")) return;
       readScroll();
       setScrolling(true);
       if (scrollIdleTimer != null) window.clearTimeout(scrollIdleTimer);
@@ -138,6 +141,23 @@ export function PointerDepth() {
       writeDepth("--pointer-x", "0");
       writeDepth("--pointer-y", "0");
       writeDepth("--scroll-depth", "0px");
+    };
+
+    const pause = () => {
+      if (scrollIdleTimer != null) {
+        window.clearTimeout(scrollIdleTimer);
+        scrollIdleTimer = null;
+      }
+      if (pointerIdleTimer != null) {
+        window.clearTimeout(pointerIdleTimer);
+        pointerIdleTimer = null;
+      }
+      if (frame != null) {
+        cancelAnimationFrame(frame);
+        frame = null;
+      }
+      setScrolling(false);
+      setDepthMoving(false);
     };
 
     const attach = () => {
@@ -175,12 +195,14 @@ export function PointerDepth() {
     };
 
     attach();
+    window.addEventListener("pi:depth-freeze", pause);
     reduced.addEventListener("change", attach);
     finePointer.addEventListener("change", attach);
     lightGpu.addEventListener("change", attach);
 
     return () => {
       detach();
+      window.removeEventListener("pi:depth-freeze", pause);
       reduced.removeEventListener("change", attach);
       finePointer.removeEventListener("change", attach);
       lightGpu.removeEventListener("change", attach);

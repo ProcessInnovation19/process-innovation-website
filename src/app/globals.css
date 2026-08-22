@@ -514,7 +514,8 @@ body {
   }
 
   /* la profondità resta, il movimento no */
-  .hud-backdrop__drift {
+  .hud-backdrop__plane--far .hud-backdrop__drift,
+  .hud-backdrop__plane--near .hud-backdrop__drift {
     animation: none;
   }
 
@@ -1116,14 +1117,14 @@ body {
  * Durante lo scroll il compositor deve seguire solo la parallasse.
  * Le derive decorative riprendono a scroll fermo.
  */
-html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__drift,
-html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__net-flow path,
-html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__net-nodes rect,
-html:is(.is-scrolling, .is-depth-moving) .hud-backdrop__sweep,
-html:is(.is-scrolling, .is-depth-moving) .map-ambience__deck-flow,
-html:is(.is-scrolling, .is-depth-moving) .map-ambience__motes-drift,
-html:is(.is-scrolling, .is-depth-moving) .map-ambience__interference,
-html:is(.is-scrolling, .is-depth-moving) .map-ambience__pulse {
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__drift,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__net-flow path,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__net-nodes rect,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .hud-backdrop__sweep,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__deck-flow,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__motes-drift,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__interference,
+html:is(.is-scrolling, .is-depth-moving, .is-modal-open) .map-ambience__pulse {
   animation-play-state: paused;
 }
 
@@ -1148,7 +1149,8 @@ html:is(.is-scrolling, .is-depth-moving) .map-ambience__pulse {
     transform: none;
   }
 
-  .hud-backdrop__drift,
+  .hud-backdrop__plane--far .hud-backdrop__drift,
+  .hud-backdrop__plane--near .hud-backdrop__drift,
   .hud-backdrop__net-flow path,
   .hud-backdrop__net-nodes rect,
   .hud-backdrop__sweep,

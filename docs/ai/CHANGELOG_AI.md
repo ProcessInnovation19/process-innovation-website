@@ -2,7 +2,7 @@
 
 | Date | Change |
 |------|--------|
-| 2026-08-22 | Fluidità HUD: variabili di profondità confinate ai layer che le usano, inseguimento puntatore più breve, derive autonome in pausa durante l'interazione, containment dei fondi; cache WebP a 7 giorni. Reveal portato a 440 ms con fascio che esce nel bordo basso; diagonali dei pannelli rese leggibili. |
+| 2026-08-22 | Fluidità HUD: variabili di profondità confinate ai layer che le usano, inseguimento puntatore più breve, derive autonome in pausa durante interazione e finestre, misure SVG riunite/deduplicate, reveal avviato dopo decode; cache WebP a 7 giorni, varianti mobile 384/480 e `sizes` corretti per il logo. Reveal portato a 440 ms con fascio che esce nel bordo basso; diagonali dei pannelli rese leggibili. |
 | 2026-08-21 | Mappa: timeout di sicurezza sullo svelamento (niente clip chiuso se `onLoad` non arriva) e bordo interno visibile sulle foto. |
 | 2026-08-21 | Mappa: lo svelamento alto→basso resta anche su mobile; il bilancio GPU toglie solo 3D e derive. |
 | 2026-08-21 | Mappa: lo svelamento parte a bitmap pronta, così al cambio voce l'immagine non compare tutta insieme dopo un ritardo. |

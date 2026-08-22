@@ -40,6 +40,7 @@ export function SystemBar({ activeCode, activeLabel, scrolled, onMap }: SystemBa
             alt={site.name}
             width={1053}
             height={540}
+            sizes="(min-width: 48rem) 94px, 78px"
             priority
             className="h-10 w-auto md:h-12"
           />
